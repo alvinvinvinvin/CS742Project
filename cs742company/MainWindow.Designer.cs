@@ -1,6 +1,6 @@
 ﻿namespace cs742company
 {
-    partial class Company
+    partial class MainWindow
     {
         /// <summary>
         /// Required designer variable.
@@ -30,13 +30,13 @@
         {
             this.SuspendLayout();
             // 
-            // Company
+            // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1634, 807);
-            this.Name = "Company";
-            this.Text = "Company";
+            this.ClientSize = new System.Drawing.Size(1596, 807);
+            this.Name = "MainWindow";
+            this.Text = "MainWindow";
             this.ResumeLayout(false);
 
         }

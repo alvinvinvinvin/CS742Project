@@ -16,7 +16,7 @@ namespace cs742company
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Company());
+            Application.Run(new MainWindow());
         }
     }
 }
