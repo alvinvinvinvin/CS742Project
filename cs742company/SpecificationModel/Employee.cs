@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace cs742company.SpecificationModel
 {
-    class Employee : IComparable<Employee>, IComparable
+    class Employee : System.Object, IComparable
     {
         private String _name;
 
@@ -21,15 +21,43 @@ namespace cs742company.SpecificationModel
             this.Name = name;
         }
 
-        public int CompareTo(Employee that) 
+        int IComparable.CompareTo(System.Object that)
         {
-            return this.Name.CompareTo(that.Name);
+            if (that == null) return 1;
+            Employee otherEmployee = that as Employee;
+            if (otherEmployee != null)
+            {
+                return this.Name.CompareTo(otherEmployee.Name);
+            }
+            else
+            {
+                throw new ArgumentException("Object is not an Employee");
+            }
         }
 
-        public Boolean equals(Employee that) 
+        public override bool Equals(System.Object obj)
         {
-            if (this.Name.Equals(that.Name)) return true;
-            else return false;
+            // If parameter is null return false.
+            if (obj == null)
+            {
+                return false;
+            }
+
+            // If parameter cannot be cast to Employee return false.
+            Employee e = obj as Employee;
+            if ((System.Object)e == null)
+            {
+                return false;
+            }
+
+            // Return true if the fields match:
+            return this.Name == e.Name;
         }
+
+        public override int GetHashCode()
+        {
+            return this.Name.GetHashCode();
+        }
+
     }
 }

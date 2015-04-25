@@ -16,16 +16,16 @@ namespace cs742company.SpecificationModel
             set { _name = value; }
         }
 
-        private SortedSet<Employee> employees;
+        private HashSet<Employee> employees;
 
-        public SortedSet<Employee> Employees
+        public HashSet<Employee> Employees
         {
             get { return employees; }
             set { employees = value; }
         }
-        private SortedSet<Project> projects;
+        private HashSet<Project> projects;
 
-        public SortedSet<Project> Projects
+        public HashSet<Project> Projects
         {
             get { return projects; }
             set { projects = value; }
@@ -74,9 +74,9 @@ namespace cs742company.SpecificationModel
                 projectHours = setTo;
             }
         }
-        private SortedSet<EmployeeProjectPair> employeeHours;
+        private HashSet<EmployeeProjectPair> employeeHours;
 
-        public SortedSet<EmployeeProjectPair> EmployeeHours
+        public HashSet<EmployeeProjectPair> EmployeeHours
         {
             get { return employeeHours; }
             set { employeeHours = value; }
@@ -86,9 +86,9 @@ namespace cs742company.SpecificationModel
         {
             //Boolean domOfEstimatedHoursComparation = true;
             //Boolean result = true;
-            if (!this.EstimatedHours.Keys.Except(Projects).Any())
+            if (this.EstimatedHours.Keys.Equals(this.Projects))
             {
-                if (!this.ProjectHours.Keys.Except(Projects).Any())
+                if (this.ProjectHours.Keys.Equals(this.Projects))
                 {
                     foreach(EmployeeProjectPair e in this.EmployeeHours)
                     {
@@ -115,7 +115,7 @@ namespace cs742company.SpecificationModel
             }
         }
 
-        
+               
         /// <summary>
         /// INIT statement
         /// </summary>
@@ -135,7 +135,7 @@ namespace cs742company.SpecificationModel
         {
             if (!stateInvariantCheck())
                 throw new InvariantException(this.GetType().Name, "AddEmployee", "before");
-            if (this.Employees.Contains(newEmployee))
+            if (this.Employees.Any(e => e.Name.Equals(newEmployee.Name)))
                 throw new PreconditionException(this.GetType().Name, "AddEmployee", "New Employee is already a member of the division " + this.Name + ".");
             this.Employees.Add(newEmployee);
 
@@ -144,7 +144,78 @@ namespace cs742company.SpecificationModel
 
         }
 
+        public void RemoveEmployee(Employee employee) 
+        {
+            Boolean resultOfRemoveFromEmployees;
+            if (!stateInvariantCheck())
+                throw new InvariantException(this.GetType().Name, "RemoveEmployee", "before");
+            if (this.Employees.Any(e => e.Name.Equals(employee.Name)))
+                throw new PreconditionException(this.GetType().Name, "RemoveEmployee", "Employee is not a member of the division " + this.Name + ".");
 
+            resultOfRemoveFromEmployees = this.Employees.Remove(employee);
+            this.EmployeeHours.ExceptWith(this.EmployeeHours.Where(eh => eh.Employee.Equals(employee)));
 
+            if (!stateInvariantCheck())
+                throw new InvariantException(this.GetType().Name, "RemoveEmployee", "after");
+            //result = this.EmployeeHours.Remove(employee);
+        }
+
+        public void AddProject(Project newProject, int estimated) 
+        {
+            if (!stateInvariantCheck())
+                throw new InvariantException(this.GetType().Name, "AddProject", "before");
+            if(estimated < 1)
+                throw new PreconditionException(this.GetType().Name, "RemoveEmployee", "Estimated hours is less than 1");
+            if(this.Projects.Contains(newProject))
+                throw new PreconditionException(this.GetType().Name, "RemoveEmployee", "Project "+newProject.Name+" already exist.");
+            this.Projects.Add(newProject);
+            this.EstimatedHours.Add(newProject,estimated);
+            this.ProjectHours.Add(newProject, 0);
+            if (!stateInvariantCheck())
+                throw new InvariantException(this.GetType().Name, "AddProject", "after");
+        }
+
+        public void RemoveProject(Project project) 
+        {
+            if (!stateInvariantCheck())
+                throw new InvariantException(this.GetType().Name, "AddProject", "before");
+            if (!this.Projects.Contains(project))
+                throw new PreconditionException(this.GetType().Name, "RemoveEmployee", "Project " + project.Name + " doesn't exist.");
+            this.Projects.Remove(project);
+            this.EstimatedHours = 
+                this.EstimatedHours.Where(kvp => !kvp.Key.Equals(project)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            this.ProjectHours =
+                this.ProjectHours.Where(kvp => !kvp.Key.Equals(project)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            this.EmployeeHours.ExceptWith(this.EmployeeHours.Where(eh => eh.Project.Equals(project)));
+            if (!stateInvariantCheck())
+                throw new InvariantException(this.GetType().Name, "AddProject", "after");
+        }
+
+        public void AssignProject(Employee employee, Project project)
+        {
+            if (!stateInvariantCheck())
+                throw new InvariantException(this.GetType().Name, "AddProject", "before");
+
+            if (!stateInvariantCheck())
+                throw new InvariantException(this.GetType().Name, "AddProject", "after");
+        }
+
+        public void DeAssignProject() 
+        {
+            if (!stateInvariantCheck())
+                throw new InvariantException(this.GetType().Name, "AddProject", "before");
+
+            if (!stateInvariantCheck())
+                throw new InvariantException(this.GetType().Name, "AddProject", "after");
+        }
+
+        public void EmployeeAddingHoursToProject()
+        {
+            if (!stateInvariantCheck())
+                throw new InvariantException(this.GetType().Name, "AddProject", "before");
+
+            if (!stateInvariantCheck())
+                throw new InvariantException(this.GetType().Name, "AddProject", "after");
+        }
     }
 }

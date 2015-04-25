@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace cs742company.SpecificationModel
 {
-    class EmployeeProjectPair : IComparable<EmployeeProjectPair>, IComparable
+    class EmployeeProjectPair : System.Object, IComparable
     {
         private Employee employee;
 
@@ -58,7 +58,7 @@ namespace cs742company.SpecificationModel
         /// <summary>
         ///  compareTo method
         /// </summary>
-        public int CompareTo(object that) 
+        int IComparable.CompareTo(System.Object that) 
         {
             if (that == null) return 1;
             EmployeeProjectPair otherEmployeeProjectPair = that as EmployeeProjectPair;
@@ -72,17 +72,29 @@ namespace cs742company.SpecificationModel
             }
         }
 
-        private Boolean equalToOtherEmployeeProjectPair(EmployeeProjectPair otherEmployeeProjectPair) 
+        public override bool Equals(System.Object obj)
         {
-            if (this.Employee.Name.Equals(otherEmployeeProjectPair.Employee.Name) &&
-                this.Project.Name.Equals(otherEmployeeProjectPair.Project.Name))
-            {
-                return true;
-            }
-            else
+            // If parameter is null return false.
+            if (obj == null)
             {
                 return false;
             }
+
+            // If parameter cannot be cast to Employee return false.
+            EmployeeProjectPair epp = obj as EmployeeProjectPair;
+            if ((System.Object)epp == null)
+            {
+                return false;
+            }
+
+            // Return true if the fields match:
+            return this.Employee.Name == epp.Employee.Name &&
+                this.Project.Name == epp.Project.Name;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Employee.Name.GetHashCode() ^ this.Project.Name.GetHashCode();
         }
     }
 }
