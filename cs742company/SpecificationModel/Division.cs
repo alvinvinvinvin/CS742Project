@@ -136,7 +136,10 @@ namespace cs742company.SpecificationModel
             if (!stateInvariantCheck())
                 throw new InvariantException(this.GetType().Name, "AddEmployee", "before");
             if (this.Employees.Any(e => e.Name.Equals(newEmployee.Name)))
-                throw new PreconditionException(this.GetType().Name, "AddEmployee", "New Employee is already a member of the division " + this.Name + ".");
+                throw new 
+                    PreconditionException(this.GetType().Name, 
+                    "AddEmployee", 
+                    "New Employee is already a member of the division " + this.Name + ".");
             this.Employees.Add(newEmployee);
 
             if (!stateInvariantCheck())
@@ -150,7 +153,10 @@ namespace cs742company.SpecificationModel
             if (!stateInvariantCheck())
                 throw new InvariantException(this.GetType().Name, "RemoveEmployee", "before");
             if (this.Employees.Any(e => e.Name.Equals(employee.Name)))
-                throw new PreconditionException(this.GetType().Name, "RemoveEmployee", "Employee is not a member of the division " + this.Name + ".");
+                throw new 
+                    PreconditionException(this.GetType().Name, 
+                    "RemoveEmployee", 
+                    "Employee is not a member of the division " + this.Name + ".");
 
             resultOfRemoveFromEmployees = this.Employees.Remove(employee);
             this.EmployeeHours.ExceptWith(this.EmployeeHours.Where(eh => eh.Employee.Equals(employee)));
@@ -165,9 +171,13 @@ namespace cs742company.SpecificationModel
             if (!stateInvariantCheck())
                 throw new InvariantException(this.GetType().Name, "AddProject", "before");
             if(estimated < 1)
-                throw new PreconditionException(this.GetType().Name, "RemoveEmployee", "Estimated hours is less than 1");
+                throw new PreconditionException(this.GetType().Name, 
+                    "AddProject", 
+                    "Estimated hours is less than 1");
             if(this.Projects.Contains(newProject))
-                throw new PreconditionException(this.GetType().Name, "RemoveEmployee", "Project "+newProject.Name+" already exist.");
+                throw new PreconditionException(this.GetType().Name, 
+                    "AddProject", 
+                    "Project " + newProject.Name + " already exist.");
             this.Projects.Add(newProject);
             this.EstimatedHours.Add(newProject,estimated);
             this.ProjectHours.Add(newProject, 0);
@@ -178,9 +188,12 @@ namespace cs742company.SpecificationModel
         public void RemoveProject(Project project) 
         {
             if (!stateInvariantCheck())
-                throw new InvariantException(this.GetType().Name, "AddProject", "before");
+                throw new InvariantException(this.GetType().Name, "RemoveProject", "before");
             if (!this.Projects.Contains(project))
-                throw new PreconditionException(this.GetType().Name, "RemoveEmployee", "Project " + project.Name + " doesn't exist.");
+                throw new 
+                    PreconditionException(this.GetType().Name, 
+                    "RemoveProject", 
+                    "Project " + project.Name + " doesn't exist.");
             this.Projects.Remove(project);
             this.EstimatedHours = 
                 this.EstimatedHours.Where(kvp => !kvp.Key.Equals(project)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
@@ -188,31 +201,79 @@ namespace cs742company.SpecificationModel
                 this.ProjectHours.Where(kvp => !kvp.Key.Equals(project)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             this.EmployeeHours.ExceptWith(this.EmployeeHours.Where(eh => eh.Project.Equals(project)));
             if (!stateInvariantCheck())
-                throw new InvariantException(this.GetType().Name, "AddProject", "after");
+                throw new InvariantException(this.GetType().Name, "RemoveProject", "after");
         }
 
         public void AssignProject(Employee employee, Project project)
         {
             if (!stateInvariantCheck())
-                throw new InvariantException(this.GetType().Name, "AddProject", "before");
+                throw new 
+                    InvariantException(this.GetType().Name, "AssignProject", "before");
+            if (!this.Employees.Contains(employee))
+                throw new 
+                    PreconditionException(this.GetType().Name, 
+                    "AssignProject", 
+                    "Employee "+employee.Name+" doesn't exist.");
+            if (!this.Projects.Contains(project))
+                throw new 
+                    PreconditionException(this.GetType().Name, 
+                    "AssignProject", 
+                    "Project " + project.Name + " doesn't exist.");
+            if(this.EmployeeHours.Any(eh => eh.Employee.Equals(employee) && eh.Project.Equals(project)))
+                throw new 
+                    PreconditionException(this.GetType().Name, 
+                    "AssignProject", 
+                    "Project " + project.Name + " has already been assigned to Employee "+employee.Name+".");
+            EmployeeProjectPair empProj = new EmployeeProjectPair();
+            empProj.Employee = employee;
+            empProj.Project = project;
+            empProj.HoursSpent = 0;
+            this.EmployeeHours.Add(empProj);
+            if (!stateInvariantCheck())
+                throw new 
+                    InvariantException(this.GetType().Name, "AssignProject", "after");
+        }
 
+        public void DeAssignProject(Employee employee, Project project) 
+        {
+            if (!stateInvariantCheck())
+                throw new InvariantException(this.GetType().Name, "AddProject", "before");
+            if (!this.Employees.Contains(employee))
+                throw new
+                    PreconditionException(this.GetType().Name,
+                    "AssignProject",
+                    "Employee " + employee.Name + " doesn't exist.");
+            if (!this.Projects.Contains(project))
+                throw new
+                    PreconditionException(this.GetType().Name,
+                    "AssignProject",
+                    "Project " + project.Name + " doesn't exist.");
+            IEnumerable<EmployeeProjectPair> target = 
+                this.EmployeeHours.Where(empProj => empProj.Employee.Equals(employee) && empProj.Project.Equals(project));
+            if (!target.Any())
+            {
+                throw new
+                       PreconditionException(this.GetType().Name,
+                       "AssignProject",
+                       "Project " + project.Name + " has not been assigned to Employee " + employee.Name + ".");
+            }
+            else
+            {
+                this.EmployeeHours.ExceptWith(target);
+            }
             if (!stateInvariantCheck())
                 throw new InvariantException(this.GetType().Name, "AddProject", "after");
         }
 
-        public void DeAssignProject() 
+        public void EmployeeAddingHoursToProject(Employee employee, Project project, int hoursToAdd)
         {
             if (!stateInvariantCheck())
                 throw new InvariantException(this.GetType().Name, "AddProject", "before");
-
-            if (!stateInvariantCheck())
-                throw new InvariantException(this.GetType().Name, "AddProject", "after");
-        }
-
-        public void EmployeeAddingHoursToProject()
-        {
-            if (!stateInvariantCheck())
-                throw new InvariantException(this.GetType().Name, "AddProject", "before");
+            if (!this.Employees.Contains(employee))
+                throw new
+                    PreconditionException(this.GetType().Name,
+                    "AssignProject",
+                    "Employee " + employee.Name + " doesn't exist.");
 
             if (!stateInvariantCheck())
                 throw new InvariantException(this.GetType().Name, "AddProject", "after");
