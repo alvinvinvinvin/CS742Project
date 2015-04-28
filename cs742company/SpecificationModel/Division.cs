@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace cs742company.SpecificationModel
 {
-    class Division
+    class Division : System.Object, IComparable
     {
         private String _name;
 
@@ -82,20 +82,94 @@ namespace cs742company.SpecificationModel
             set { employeeHours = value; }
         }
 
+        int IComparable.CompareTo(System.Object that)
+        {
+            if (that == null) return 1;
+            Division otherDivision = that as Division;
+            if (otherDivision != null)
+            {
+                return this.Name.CompareTo(otherDivision.Name);
+            }
+            else
+            {
+                throw new ArgumentException("Object is not an Division");
+            }
+        }
+
+        public override bool Equals(System.Object obj)
+        {
+            // If parameter is null return false.
+            if (obj == null)
+            {
+                return false;
+            }
+
+            // If parameter cannot be cast to Division return false.
+            Division d = obj as Division;
+            if ((System.Object)d == null)
+            {
+                return false;
+            }
+
+            // Return true if the fields match:
+            return this.Name == d.Name;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Name.GetHashCode();
+        }
+
         private Boolean stateInvariantCheck() 
         {
-            //Boolean domOfEstimatedHoursComparation = true;
-            //Boolean result = true;
+            //
+            // The state invariant asserts that the domain of estimatedHours 
+            // must be equal to projects
+            //
             if (this.EstimatedHours.Keys.Equals(this.Projects))
             {
+                //
+                // The state invariant asserts that the domain of projectHours
+                // must be equal to projects
+                //
                 if (this.ProjectHours.Keys.Equals(this.Projects))
                 {
-                    foreach(EmployeeProjectPair e in this.EmployeeHours)
+
+                    foreach(EmployeeProjectPair e1 in this.EmployeeHours)
                     {
-                        if (this.Employees.Contains(e.Employee) &&
-                            this.Projects.Contains(e.Project))
+                        //
+                        // The state invariant asserts that the employee of each element
+                        // in employeeHours must be the member of employees and the project
+                        // of each element in employeeHours must be the member of projects
+                        //
+                        if (this.Employees.Contains(e1.Employee) &&
+                            this.Projects.Contains(e1.Project))
                         {
-                            return true;
+                            foreach (EmployeeProjectPair e2 in this.EmployeeHours)
+                            {
+                                //
+                                // The state invariant asserts that each element
+                                // in employeeHours must be uniquely identified by its
+                                // employee and project. I have already overridden the
+                                // "Equals()" method in each class to comparing "Name"
+                                // property between each object to determine whether they
+                                // are equal or not. For more details please check each
+                                // class.
+                                //
+                                if (e1.Equals(e2)) 
+                                {
+                                    if (e1.Employee.Name.Equals(e2.Employee.Name) && 
+                                        e1.Project.Name.Equals(e2.Project.Name))
+                                    {
+                                        return true;
+                                    }
+                                    else
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                            return false;
                         }
                         else
                         {
@@ -237,16 +311,16 @@ namespace cs742company.SpecificationModel
         public void DeAssignProject(Employee employee, Project project) 
         {
             if (!stateInvariantCheck())
-                throw new InvariantException(this.GetType().Name, "AddProject", "before");
+                throw new InvariantException(this.GetType().Name, "DeAssignProject", "before");
             if (!this.Employees.Contains(employee))
                 throw new
                     PreconditionException(this.GetType().Name,
-                    "AssignProject",
+                    "DeAssignProject",
                     "Employee " + employee.Name + " doesn't exist.");
             if (!this.Projects.Contains(project))
                 throw new
                     PreconditionException(this.GetType().Name,
-                    "AssignProject",
+                    "DeAssignProject",
                     "Project " + project.Name + " doesn't exist.");
             IEnumerable<EmployeeProjectPair> target = 
                 this.EmployeeHours.Where(empProj => empProj.Employee.Equals(employee) && empProj.Project.Equals(project));
@@ -254,7 +328,7 @@ namespace cs742company.SpecificationModel
             {
                 throw new
                        PreconditionException(this.GetType().Name,
-                       "AssignProject",
+                       "DeAssignProject",
                        "Project " + project.Name + " has not been assigned to Employee " + employee.Name + ".");
             }
             else
@@ -262,21 +336,54 @@ namespace cs742company.SpecificationModel
                 this.EmployeeHours.ExceptWith(target);
             }
             if (!stateInvariantCheck())
-                throw new InvariantException(this.GetType().Name, "AddProject", "after");
+                throw new InvariantException(this.GetType().Name, "DeAssignProject", "after");
         }
 
         public void EmployeeAddingHoursToProject(Employee employee, Project project, int hoursToAdd)
         {
             if (!stateInvariantCheck())
-                throw new InvariantException(this.GetType().Name, "AddProject", "before");
+                throw new InvariantException(this.GetType().Name, "EmployeeAddingHoursToProject", "before");
+            if (hoursToAdd < 1)
+            {
+                throw new
+                    PreconditionException(this.GetType().Name,
+                    "EmployeeAddingHoursToProject",
+                    "hoursToAdd is less than 1.");
+            }
             if (!this.Employees.Contains(employee))
                 throw new
                     PreconditionException(this.GetType().Name,
-                    "AssignProject",
-                    "Employee " + employee.Name + " doesn't exist.");
-
+                    "EmployeeAddingHoursToProject",
+                    "Employee " + employee.Name + " doesn't exist in Employees.");
+            if (!this.ProjectHours.Any(ph => ph.Key.Name.Equals(project.Name)))
+            {
+                throw new
+                    PreconditionException(this.GetType().Name,
+                    "EmployeeAddingHoursToProject",
+                    "Project " + project.Name + " doesn't exist in ProjectHours.");
+            }
+            IEnumerable<EmployeeProjectPair> target =
+                this.EmployeeHours.Where(empProj => empProj.Employee.Equals(employee) && empProj.Project.Equals(project));
+            if (!target.Any())
+            {
+                throw new
+                       PreconditionException(this.GetType().Name,
+                       "DeAssignProject",
+                       "Project " + project.Name + " has not been assigned to Employee " + employee.Name + ".");
+            }
+            else
+            {
+                this.EmployeeHours.ExceptWith(target);
+                EmployeeProjectPair newEmpProj = new EmployeeProjectPair();
+                newEmpProj.Employee = employee;
+                newEmpProj.Project = project;
+                newEmpProj.HoursSpent = 
+                    target.FirstOrDefault(empProj => empProj.Employee.Equals(employee) && empProj.Project.Equals(project)).HoursSpent + hoursToAdd;
+                this.EmployeeHours.Add(newEmpProj);
+                this.ProjectHours[project] = this.ProjectHours[project] + hoursToAdd;
+            }
             if (!stateInvariantCheck())
-                throw new InvariantException(this.GetType().Name, "AddProject", "after");
+                throw new InvariantException(this.GetType().Name, "EmployeeAddingHoursToProject", "after");
         }
     }
 }

@@ -80,7 +80,7 @@ namespace cs742company.SpecificationModel
                 return false;
             }
 
-            // If parameter cannot be cast to Employee return false.
+            // If parameter cannot be cast to EmployeeProjectPair return false.
             EmployeeProjectPair epp = obj as EmployeeProjectPair;
             if ((System.Object)epp == null)
             {
