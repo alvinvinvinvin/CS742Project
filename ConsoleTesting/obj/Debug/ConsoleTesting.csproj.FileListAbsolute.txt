@@ -7,3 +7,6 @@ C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\ConsoleTesting\o
 C:\Users\alvinchen\Documents\Visual Studio 2013\Projects\cs742company\ConsoleTesting\bin\Debug\ConsoleTesting.exe.config
 C:\Users\alvinchen\Documents\Visual Studio 2013\Projects\cs742company\ConsoleTesting\obj\Debug\ConsoleTesting.exe
 C:\Users\alvinchen\Documents\Visual Studio 2013\Projects\cs742company\ConsoleTesting\obj\Debug\ConsoleTesting.pdb
+C:\Users\alvinchen\documents\visual studio 2013\Projects\cs742company\ConsoleTesting\bin\Debug\ConsoleTesting.exe
+C:\Users\alvinchen\documents\visual studio 2013\Projects\cs742company\ConsoleTesting\bin\Debug\ConsoleTesting.pdb
+C:\Users\alvinchen\documents\visual studio 2013\Projects\cs742company\ConsoleTesting\obj\Debug\ConsoleTesting.csprojResolveAssemblyReference.cache

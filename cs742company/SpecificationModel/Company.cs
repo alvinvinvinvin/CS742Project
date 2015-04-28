@@ -8,7 +8,20 @@ namespace cs742company.SpecificationModel
 {
     class Company
     {
-        int NumberOfDivisions;
+        private int numberOfDivisions;
+
+        public int NumberOfDivisions
+        {
+            get { return numberOfDivisions; }
+            set 
+            {
+                if (value < 1)
+                {
+                    throw new PreconditionException(this.GetType().Name, "setNumberOfDivisions", "Number of divisions is less than 1.");
+                }
+                numberOfDivisions = value; 
+            }
+        }
 
         public int extractEstimatedHoursForProject(HashSet<Division> divisions, Project p) 
         {
@@ -130,11 +143,46 @@ namespace cs742company.SpecificationModel
 		/// Constructor method based on INIT.
 		/// 
 		/// </summary>
-		public Company()
-		{
-			this.Divisions = new HashSet<Division> (NumberOfDivisions);
+
+		public Company(String[] divisionsNames)
+        {
+            if (divisionsNames.Length < 1)
+            {
+                throw new
+                    PreconditionException(this.GetType().Name,
+                    "init of company",
+                    "you must input at least one division name to initialize a company");
+            }
+            this.NumberOfDivisions = divisionsNames.Length;
+            // Dupilicated elements checking
+            if (divisionsNames.Distinct().Count() != divisionsNames.Count())
+            {
+                throw new
+                    PreconditionException(this.GetType().Name,
+                    "init of company",
+                    "you must input unduplicated names for each divisions to initialize a company");
+            }
+
+            /// <summary>
+            /// Dynamically generate division objects by names input.
+            /// </summary>
+            IDictionary<String, Division> col = new Dictionary<String, Division>();
+            foreach (string name in divisionsNames)
+            {
+                col[name] = new Division { Name = "Division " + name};
+            }
+
+            /// <summary>
+            /// Pass generated division objects to divisions of this company
+            /// </summary>
+			this.Divisions = new HashSet<Division> (col.Values);
+            this.Managers = null;
 		}
 
+        public void HireManager(Manager manager, String division) 
+        {
+
+        }
 
     }
 }

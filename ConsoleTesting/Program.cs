@@ -72,7 +72,8 @@ namespace ConsoleTesting
         }
 
 		int number;
-		private HashSet<String> testHashSet;
+        private HashSet<String> testHashSet;
+
 		public HashSet<String> TestHashSet
 		{
 			get{ return testHashSet; }
@@ -118,9 +119,23 @@ namespace ConsoleTesting
             {
                 Console.Write(e.Name+"   ");
             }
-
-			this.TestHashSet = new HashSet<string> (new List<String>(3));
-			Console.WriteLine (TestHashSet.Count);
+            Program p1 = new Program();
+            String s1 = "a";
+            String s2 = "a";
+            String s3 = "b";
+            String s4 = "c";
+            List<String> temp = new List<String>(4);
+            List<String> temp2 = new List<string>(3);
+            temp2.TrimExcess();
+            temp.Add(s1);
+            temp.Add(s2);
+            temp.Add(s3);
+            temp.Add(s4);
+            temp.TrimExcess();
+            p1.TestHashSet = new HashSet<string>(temp2);
+            //p1.TestHashSet.TrimExcess();
+            //p1.TestHashSet = new HashSet<String>();
+            Console.WriteLine(p1.TestHashSet.Count);
             Console.ReadKey();
         }
     }
