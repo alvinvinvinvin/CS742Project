@@ -41,7 +41,8 @@ namespace cs742company
                     {
                         using (myStream)
                         {
-                            ExceptionReportor.Text = "Loading file successful.";
+                            TextReader tr = new StreamReader(myStream);
+                            ExceptionReportor.Text = tr.ReadToEnd();
                             // Insert code to read the stream here.
                         }
                     }
