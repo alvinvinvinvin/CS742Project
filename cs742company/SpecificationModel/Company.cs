@@ -126,7 +126,14 @@ namespace cs742company.SpecificationModel
             
         }
 
-
+		/// <summary>
+		/// Constructor method based on INIT.
+		/// 
+		/// </summary>
+		public Company()
+		{
+			this.Divisions = new HashSet<Division> (NumberOfDivisions);
+		}
 
 
     }

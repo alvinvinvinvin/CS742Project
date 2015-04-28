@@ -71,6 +71,15 @@ namespace ConsoleTesting
             }
         }
 
+		int number;
+		private HashSet<String> testHashSet;
+		public HashSet<String> TestHashSet
+		{
+			get{ return testHashSet; }
+			set{ testHashSet = value;}
+		}
+
+
         static void Main(string[] args)
         {
             Employee a = new Employee("employee A");
@@ -109,6 +118,9 @@ namespace ConsoleTesting
             {
                 Console.Write(e.Name+"   ");
             }
+
+			this.TestHashSet = new HashSet<string> (new List<String>(3));
+			Console.WriteLine (TestHashSet.Count);
             Console.ReadKey();
         }
     }
