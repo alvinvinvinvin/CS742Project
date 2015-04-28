@@ -1,10 +1,10 @@
 c:\users\alvinchen\documents\visual studio 2013\Projects\cs742company\cs742company\bin\Debug\cs742company.exe.config
 C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742company\bin\Debug\cs742company.exe.config
 C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742company\obj\Debug\cs742company.csprojResolveAssemblyReference.cache
-C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742company\obj\Debug\cs742company.Company.resources
 C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742company\obj\Debug\cs742company.Properties.Resources.resources
 C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742company\obj\Debug\cs742company.csproj.GenerateResource.Cache
 C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742company\bin\Debug\cs742company.exe
 C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742company\bin\Debug\cs742company.pdb
 C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742company\obj\Debug\cs742company.exe
 C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742company\obj\Debug\cs742company.pdb
+C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742company\obj\Debug\cs742company.MainWindow.resources
