@@ -1,0 +1,8 @@
+/Users/hanchen/Documents/CS742Project/cs742company/obj/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/Users/hanchen/Documents/CS742Project/cs742company/obj/Debug/cs742company.MainWindow.resources
+/Users/hanchen/Documents/CS742Project/cs742company/obj/Debug/cs742company.Properties.Resources.resources
+/Users/hanchen/Documents/CS742Project/cs742company/bin/Debug/cs742company.exe.config
+/Users/hanchen/Documents/CS742Project/cs742company/bin/Debug/cs742company.exe.mdb
+/Users/hanchen/Documents/CS742Project/cs742company/bin/Debug/cs742company.exe
+/Users/hanchen/Documents/CS742Project/cs742company/obj/Debug/cs742company.exe
+/Users/hanchen/Documents/CS742Project/cs742company/obj/Debug/cs742company.exe.mdb
