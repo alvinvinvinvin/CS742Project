@@ -37,11 +37,13 @@
             this.ClientSize = new System.Drawing.Size(900, 450);
             this.Name = "MainWindow";
             this.Text = "MainWindow";
+            this.Load += new System.EventHandler(this.MainWindow_Load);
             this.ResumeLayout(false);
 
         }
 
         #endregion
+
     }
 }
 

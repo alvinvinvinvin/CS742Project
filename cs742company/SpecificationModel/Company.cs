@@ -150,17 +150,17 @@ namespace cs742company.SpecificationModel
             {
                 throw new
                     PreconditionException(this.GetType().Name,
-                    "init of company",
+                    "INIT of company",
                     "you must input at least one division name to initialize a company");
             }
             this.NumberOfDivisions = divisionsNames.Length;
-            // Dupilicated elements checking
+            // Duplicated elements checking
             if (divisionsNames.Distinct().Count() != divisionsNames.Count())
             {
                 throw new
                     PreconditionException(this.GetType().Name,
-                    "init of company",
-                    "you must input unduplicated names for each divisions to initialize a company");
+                    "INIT of company",
+                    "you must input non-duplicated names for each divisions to initialize a company");
             }
 
             /// <summary>
@@ -181,7 +181,541 @@ namespace cs742company.SpecificationModel
 
         public void HireManager(Manager manager, String division) 
         {
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name, "HireManager","before");
+            }
+            if (this.Managers.Values.Contains(manager)) 
+            {
+                throw new
+                   PreconditionException(this.GetType().Name,
+                   "HireManager",
+                   "Manager "+manager.Name+" already belong to Managers.");
+            }
+            if (this.Managers.Keys.Any(d => d.Name.Equals(division)))
+            {
+                throw new 
+                    PreconditionException(this.GetType().Name,
+                    "HireManager",
+                    "Division " + division + " already have a manager.");
+            }
+            Division target = this.Divisions.Where(d => d.Name.Equals(division)).FirstOrDefault();
+            if (target == null)
+            {
+                throw new
+                    PreconditionException(this.GetType().Name,
+                    "HireManager",
+                    "Division " + division + " doesn't exist.");
+            }
+            else
+            {
+                this.Managers.Add(target, manager);
+            }
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name, "HireManager", "after");
+            }
+        }
 
+        public void FireManager(String division) 
+        {
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name, "FireManager", "before");
+            }
+            Division target = this.Managers.Keys.Where(d => d.Name.Equals(division)).FirstOrDefault();
+            if (target == null)
+            {
+                throw new
+                    PreconditionException(this.GetType().Name,
+                    "HireManager",
+                    "Division " + division + " doesn't exist.");
+            }
+            else
+            {
+                this.Managers = 
+                    this.Managers.Where(m => !m.Key.Name.Equals(division)).ToDictionary(m => m.Key, m => m.Value);
+            }
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name, "FireManager", "after");
+            }
+        }
+
+        public void MoveManagerFromOneDivisionToAnother(String from, String to) 
+        {
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name, "MoveManagerFromOneDivisionToAnother", "before");
+            }
+            Division source = this.Divisions.Where(s => s.Name.Equals(from)).FirstOrDefault();
+            Division destination = this.Divisions.Where(d => d.Name.Equals(to)).FirstOrDefault();
+            if (source == null)
+            {
+                throw new
+                    PreconditionException(this.GetType().Name,
+                    "MoveManagerFromOneDivisionToAnother",
+                    "Division " + from + " doesn't exist.");
+            }
+            else
+            {
+                if (destination == null)
+                {
+                    throw new
+                    PreconditionException(this.GetType().Name,
+                    "MoveManagerFromOneDivisionToAnother",
+                    "Division " + to + " doesn't exist.");
+                }
+                else
+                {
+                    IEnumerable<Division> domManagerD = this.Managers.Keys.Where(dm => dm.Name.Equals(destination.Name));
+                    if (domManagerD.Any())
+                    {
+                        throw new
+                        PreconditionException(this.GetType().Name,
+                        "MoveManagerFromOneDivisionToAnother",
+                        "Division " + domManagerD.FirstOrDefault().Name + " already have a manager.");
+                    }
+                    else
+                    {
+                        IEnumerable<Division> domManagerS = this.Managers.Keys.Where(dm => dm.Name.Equals(source.Name));
+                        if (!domManagerS.Any())
+                        {
+                            throw new
+                            PreconditionException(this.GetType().Name,
+                            "MoveManagerFromOneDivisionToAnother",
+                            "Division " + domManagerD.FirstOrDefault().Name + " doesn't have any manager.");
+                        }
+                        else
+                        {
+                            this.Managers =
+                            this.Managers.Where
+                            (m => !m.Key.Name.Equals(source.Name)).ToDictionary
+                            (m => m.Key, m => m.Value);
+                            this.Managers.Add(destination, this.Managers[source]);
+                        }
+                    }
+                }
+            }
+
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name, "MoveManagerFromOneDivisionToAnother", "after");
+            }
+        }
+
+        public void HireEmployee(String division, Employee newEmployee) 
+        {
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name,
+                    "HireEmployee", "before");
+            }
+            Division d = this.Divisions.Where(div => div.Name.Equals(division)).FirstOrDefault();
+            if (d == null)
+            {
+                throw new
+                PreconditionException(this.GetType().Name,
+                "HireEmployee",
+                "Division " + division + " doesn't exist.");
+            }
+            else
+            {
+                if (this.Divisions.Any(dOther => dOther.Employees.Contains(newEmployee)))
+                {
+                    throw new
+                    PreconditionException(this.GetType().Name,
+                    "HireEmployee",
+                    "Employee " + newEmployee.Name + " already exist in other division.");
+                }
+                else
+                {
+                    d.AddEmployee(newEmployee);
+                }
+            }
+
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name,
+                    "HireEmployee", "after");
+            }
+        }
+
+        public void FireEmployee(String division, Employee employee)
+        {
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name,
+                    "FireEmployee", "before");
+            }
+            Division d = this.Divisions.Where(div => div.Name.Equals(division)).FirstOrDefault();
+            if (d == null)
+            {
+                throw new
+                PreconditionException(this.GetType().Name,
+                "FireEmployee",
+                "Division " + division + " doesn't exist.");
+            }
+            else
+            {
+                d.RemoveEmployee(employee);
+            }
+
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name,
+                    "FireEmployee", "after");
+            }
+        }
+
+        public void MoveEmployeeFromOneDivisionToAnother(String from, String to, Employee employee)
+        {
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name, "MoveEmployeeFromOneDivisionToAnother", "before");
+            }
+            Division source = this.Divisions.Where(s => s.Name.Equals(from)).FirstOrDefault();
+            Division destination = this.Divisions.Where(d => d.Name.Equals(to)).FirstOrDefault();
+            if (source == null)
+            {
+                throw new
+                    PreconditionException(this.GetType().Name,
+                    "MoveEmployeeFromOneDivisionToAnother",
+                    "Division " + from + " doesn't exist.");
+            }
+            else
+            {
+                if (destination == null)
+                {
+                    throw new
+                    PreconditionException(this.GetType().Name,
+                    "MoveEmployeeFromOneDivisionToAnother",
+                    "Division " + to + " doesn't exist.");
+                }
+                else
+                {
+                    if (!source.Employees.Contains(employee))
+                    {
+                        throw new
+                        PreconditionException(this.GetType().Name,
+                        "MoveEmployeeFromOneDivisionToAnother",
+                        "Employee " + employee.Name + " doesn't exist in Division "
+                        + source.Name + ".");
+                    }
+                    else
+                    {
+                        if (destination.Employees.Contains(employee))
+                        {
+                            throw new
+                            PreconditionException(this.GetType().Name,
+                            "MoveEmployeeFromOneDivisionToAnother",
+                            "Employee " + employee.Name + " already exist in Division "
+                            + destination.Name + ".");
+                        }
+                        else
+                        {
+                            this.Divisions.Remove(source);
+                            this.Divisions.Remove(destination);
+
+                            Division newSource = new Division();
+                            Division newDestination = new Division();
+
+                            newSource.Name = source.Name;
+                            source.Employees.ExceptWith(source.Employees.Where(e => e.Name.Equals(employee.Name)));
+                            newSource.Employees = source.Employees;
+                            newSource.Projects = source.Projects;
+                            newSource.EstimatedHours = source.EstimatedHours;
+                            newSource.ProjectHours = source.ProjectHours;
+                            source.EmployeeHours.ExceptWith(source.EmployeeHours.Where(empProj => empProj.Employee.Equals(employee)));
+                            newSource.EmployeeHours = source.EmployeeHours;
+
+                            newDestination.Name = destination.Name;
+                            destination.Employees.Add(employee);
+                            newDestination.Employees = destination.Employees;
+                            newDestination.Projects = destination.Projects;
+                            newDestination.EstimatedHours = destination.EstimatedHours;
+                            newDestination.ProjectHours = destination.ProjectHours;
+                            newDestination.EmployeeHours = destination.EmployeeHours;
+
+                            this.Divisions.Add(newSource);
+                            this.Divisions.Add(newDestination);
+                        }
+                    }
+                }
+            }
+
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name, "MoveEmployeeFromOneDivisionToAnother", "after");
+            }
+        }
+
+        public void AddNewProjectToDivision(String division, Project newProject, int estimated) 
+        {
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name,
+                    "AddNewProjectToDivision", "before");
+            }
+
+            if (estimated < 1)
+            {
+                throw new
+                PreconditionException(this.GetType().Name,
+                "AddNewProjectToDivision",
+                "Estimated time is less than 1.");
+            }
+
+            Division d = this.Divisions.Where(div => div.Name.Equals(division)).FirstOrDefault();
+            if (d == null)
+            {
+                throw new
+                PreconditionException(this.GetType().Name,
+                "AddNewProjectToDivision",
+                "Division " + d.Name + " doesn't exist.");
+            }
+            else
+            {
+                if (!isDivisionOperational(this.Managers, d))
+                {
+                    throw new
+                    PreconditionException(this.GetType().Name,
+                    "AddNewProjectToDivision",
+                    "Division " + d.Name + " isn't operational.");
+                }
+                else
+                {
+                    d.AddProject(newProject, estimated);
+                }
+            }
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name,
+                    "AddNewProjectToDivision", "after");
+            }
+        }
+
+        public void RemoveProjectFromDivision(String division, Project project)
+        {
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name,
+                    "RemoveProjectFromDivision", "before");
+            }
+            Division d = this.Divisions.Where(div => div.Name.Equals(division)).FirstOrDefault();
+            if (d == null)
+            {
+                throw new
+                PreconditionException(this.GetType().Name,
+                "RemoveProjectFromDivision",
+                "Division " + d.Name + " doesn't exist.");
+            }
+            else
+            {
+                if (!isDivisionOperational(this.Managers, d))
+                {
+                    throw new
+                    PreconditionException(this.GetType().Name,
+                    "RemoveProjectFromDivision",
+                    "Division " + d.Name + " isn't operational.");
+                }
+                else
+                {
+                    d.RemoveProject(project);
+                }
+            }
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name,
+                    "RemoveProjectFromDivision", "after");
+            }
+        }
+
+        public void AssignProjectWithinDivision(String division, Project project, Employee employee)
+        {
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name,
+                    "AssignProjectWithinDivision", "before");
+            }
+
+            Division d = this.Divisions.Where(div => div.Name.Equals(division)).FirstOrDefault();
+            if (d == null)
+            {
+                throw new
+                PreconditionException(this.GetType().Name,
+                "AssignProjectWithinDivision",
+                "Division " + d.Name + " doesn't exist.");
+            }
+            else
+            {
+                if (!isDivisionOperational(this.Managers, d))
+                {
+                    throw new
+                    PreconditionException(this.GetType().Name,
+                    "AssignProjectWithinDivision",
+                    "Division " + d.Name + " isn't operational.");
+                }
+                else
+                {
+                    d.AssignProject(employee, project);
+                }
+            }
+
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name,
+                    "AssignProjectWithinDivision", "after");
+            }
+        }
+
+        public void DeAssignProjectWithinDivision(String division, Project project, Employee employee)
+        {
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name,
+                    "DeAssignProjectWithinDivision", "before");
+            }
+
+            Division d = this.Divisions.Where(div => div.Name.Equals(division)).FirstOrDefault();
+            if (d == null)
+            {
+                throw new
+                PreconditionException(this.GetType().Name,
+                "DeAssignProjectWithinDivision",
+                "Division " + d.Name + " doesn't exist.");
+            }
+            else
+            {
+                if (!isDivisionOperational(this.Managers, d))
+                {
+                    throw new
+                    PreconditionException(this.GetType().Name,
+                    "DeAssignProjectWithinDivision",
+                    "Division " + d.Name + " isn't operational.");
+                }
+                else
+                {
+                    d.DeAssignProject(employee, project);
+                }
+            }
+
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name,
+                    "DeAssignProjectWithinDivision", "after");
+            }
+        }
+
+        public void EmployeeAddingHoursToProjectInDivision(String division, Project project, Employee employee, int hoursToAdd)
+        {
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name,
+                    "EmployeeAddingHoursToProjectInDivision", "before");
+            }
+            if (hoursToAdd < 1)
+            {
+                throw new
+                PreconditionException(this.GetType().Name,
+                "EmployeeAddingHoursToProjectInDivision",
+                "Hours to add is less than 1.");
+            }
+
+            Division d = this.Divisions.Where(div => div.Name.Equals(division)).FirstOrDefault();
+            if (d == null)
+            {
+                throw new
+                PreconditionException(this.GetType().Name,
+                "EmployeeAddingHoursToProjectInDivision",
+                "Division " + d.Name + " doesn't exist.");
+            }
+            else
+            {
+                if (!isDivisionOperational(this.Managers, d))
+                {
+                    throw new
+                    PreconditionException(this.GetType().Name,
+                    "EmployeeAddingHoursToProjectInDivision",
+                    "Division " + d.Name + " isn't operational.");
+                }
+                else
+                {
+                    d.EmployeeAddingHoursToProject(employee, project, hoursToAdd);
+                }
+            }
+
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name,
+                    "EmployeeAddingHoursToProjectInDivision", "after");
+            }
+        }
+
+        public String CompleteProject(Project project)
+        {
+            int totalEstimatedHours;
+            int totalHoursSpent;
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name,
+                    "CompleteProject", "before");
+            }
+            HashSet<Division> divisionSubset = new HashSet<Division>(this.Divisions.Where(div => div.Projects.Contains(project)));
+            if (!divisionSubset.Any())
+            {
+                throw new
+                PreconditionException(this.GetType().Name,
+                "CompleteProject",
+                "Project " + project.Name + " doesn't exist.");
+            }
+            else
+            {
+                totalEstimatedHours = extractEstimatedHoursForProject(divisionSubset, project);
+                totalHoursSpent = extractHoursSpentForProject(divisionSubset, project);
+            }
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name,
+                    "CompleteProject", "after");
+            }
+            return "totalEstimatedHours: " + totalEstimatedHours 
+                    + "; totalHoursSpent:" + totalHoursSpent;
+        }
+
+        public int ReportHoursSpentbyEmployeeOnProject(Employee employee, Project project)
+        {
+            int hours;
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name,
+                    "ReportHoursSpentbyEmployeeOnProject", "before");
+            }
+            Division target = this.Divisions.Where(d =>
+                     d.EmployeeHours.Any(empProj =>
+                     empProj.Employee.Equals(employee) &&
+                     empProj.Project.Equals(project))).FirstOrDefault();
+            if (target == null)
+            {
+                throw new
+                PreconditionException(this.GetType().Name,
+                "ReportHoursSpentbyEmployeeOnProject",
+                "The relation between Project " + project.Name
+                + " and Employee " + employee.Name + " doesn't exist in Division "
+                + target.Name + ".");
+            }
+            else
+            {
+                hours = target.EmployeeHours.FirstOrDefault(empProj =>
+                     empProj.Employee.Equals(employee) &&
+                     empProj.Project.Equals(project)).HoursSpent;
+            }
+            if (!stateInvariantCheck())
+            {
+                throw new InvariantException(this.GetType().Name,
+                    "ReportHoursSpentbyEmployeeOnProject", "after");
+            }
+            return hours;
         }
 
     }
