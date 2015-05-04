@@ -136,6 +136,9 @@ namespace ConsoleTesting
             //p1.TestHashSet.TrimExcess();
             //p1.TestHashSet = new HashSet<String>();
             Console.WriteLine(p1.TestHashSet.Count);
+
+			//this.TestHashSet = new HashSet<string> (new List<String>(3));
+			//Console.WriteLine (TestHashSet.Count);
             Console.ReadKey();
         }
     }
