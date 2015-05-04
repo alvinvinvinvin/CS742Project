@@ -8,17 +8,15 @@ namespace cs742company.SpecificationModel
 {
     class Manager : System.Object, IComparable
     {
-        private String _name;
 
-        public String Name
-        {
-            get { return _name; }
-            set { _name = value; }
-        }
+		public NAME Name {
+			get;
+			set;
+		}
 
         public Manager(String name) 
         {
-            this.Name = name;
+			this.Name = new NAME(name);
         }
 
         int IComparable.CompareTo(System.Object that)

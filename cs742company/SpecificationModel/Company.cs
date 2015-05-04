@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace cs742company.SpecificationModel
 {
     class Company
     {
-        private int numberOfDivisions;
+        int numberOfDivisions;
 
         public int NumberOfDivisions
         {
@@ -17,7 +15,7 @@ namespace cs742company.SpecificationModel
             {
                 if (value < 1)
                 {
-                    throw new PreconditionException(this.GetType().Name, "setNumberOfDivisions", "Number of divisions is less than 1.");
+                    throw new PreconditionException(GetType().Name, "setNumberOfDivisions", "Number of divisions is less than 1.");
                 }
                 numberOfDivisions = value; 
             }
@@ -34,7 +32,7 @@ namespace cs742company.SpecificationModel
                 if (!divisions.Any(d => d.Projects.Contains(p)))
                 {
                     throw new
-                        PreconditionException(this.GetType().Name,
+                        PreconditionException(GetType().Name,
                         "extractEstimatedHoursForProject",
                         "Project " + p.Name + " doesn't belong to any of these divisions.");
                 }
@@ -59,7 +57,7 @@ namespace cs742company.SpecificationModel
                 if (!divisions.Any(d => d.Projects.Contains(p)))
                 {
                     throw new
-                        PreconditionException(this.GetType().Name,
+                        PreconditionException(GetType().Name,
                         "extractEstimatedHoursForProject",
                         "Project " + p.Name + " doesn't belong to any of these divisions.");
                 }
@@ -78,50 +76,36 @@ namespace cs742company.SpecificationModel
             return managers.Keys.Contains(d) && d.Employees.Any();
         }
 
-        private HashSet<Division> divisions;
 
-        public HashSet<Division> Divisions
-        {
-            get { return divisions; }
-            set { divisions = value; }
-        }
-        private Dictionary<Division, Manager> managers;
-
-        public Dictionary<Division, Manager> Managers
-        {
-            get { return managers; }
-            set { managers = value; }
-        }
-
-
-        private Boolean stateInvariantCheck() 
+        public HashSet<Division> Divisions {
+			get;
+			set;
+		}
+        public Dictionary<Division, Manager> Managers {
+				get;
+				set;
+		}
+        Boolean stateInvariantCheck() 
         {
             //
             // The state invariant asserts that the domain of managers must be
             // the subset of divisions.
             //
-            if (new HashSet<Division>(this.Managers.Keys).IsSubsetOf(this.Divisions))
+            if (new HashSet<Division>(Managers.Keys).IsSubsetOf(Divisions))
             {
                 //
                 // The state invariant asserts that employees of each element in divisions
                 // must not have intersection and each division must be unique by name.
                 //
-                foreach (Division d1 in this.Divisions)
+                foreach (Division d1 in Divisions)
                 {
-                    foreach (Division d2 in this.Divisions)
+                    foreach (Division d2 in Divisions)
                     {
                         if (!d1.Employees.Intersect(d2.Employees).Any())
                         {
                             if (d1.Equals(d2))
                             {
-                                if (d1.Name.Equals(d2.Name))
-                                {
-                                    return true;
-                                }
-                                else
-                                {
-                                    return false;
-                                }
+                                return d1.Name.Equals (d2.Name);
                             }
                         }
                         else
@@ -149,71 +133,68 @@ namespace cs742company.SpecificationModel
             if (divisionsNames.Length < 1)
             {
                 throw new
-                    PreconditionException(this.GetType().Name,
+                    PreconditionException(GetType().Name,
                     "INIT of company",
                     "you must input at least one division name to initialize a company");
             }
-            this.NumberOfDivisions = divisionsNames.Length;
+            NumberOfDivisions = divisionsNames.Length;
             // Duplicated elements checking
             if (divisionsNames.Distinct().Count() != divisionsNames.Count())
             {
                 throw new
-                    PreconditionException(this.GetType().Name,
+                    PreconditionException(GetType().Name,
                     "INIT of company",
                     "you must input non-duplicated names for each divisions to initialize a company");
             }
 
-            /// <summary>
-            /// Dynamically generate division objects by names input.
-            /// </summary>
+            
+            // Dynamically generate division objects by names input.
             IDictionary<String, Division> col = new Dictionary<String, Division>();
             foreach (string name in divisionsNames)
             {
-                col[name] = new Division { Name = "Division " + name};
+				col[name] = new Division { Name = new DIVISION_NAME("Division " + name)};
             }
-
-            /// <summary>
-            /// Pass generated division objects to divisions of this company
-            /// </summary>
-			this.Divisions = new HashSet<Division> (col.Values);
-            this.Managers = null;
+				
+            // Pass generated division objects to divisions of this company
+			Divisions = new HashSet<Division> (col.Values);
+            Managers = null;
 		}
 
         public void HireManager(Manager manager, String division) 
         {
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name, "HireManager","before");
+                throw new InvariantException(GetType().Name, "HireManager","before");
             }
-            if (this.Managers.Values.Contains(manager)) 
+            if (Managers.Values.Contains(manager)) 
             {
                 throw new
-                   PreconditionException(this.GetType().Name,
+                   PreconditionException(GetType().Name,
                    "HireManager",
                    "Manager "+manager.Name+" already belong to Managers.");
             }
-            if (this.Managers.Keys.Any(d => d.Name.Equals(division)))
+            if (Managers.Keys.Any(d => d.Name.Equals(division)))
             {
                 throw new 
-                    PreconditionException(this.GetType().Name,
+                    PreconditionException(GetType().Name,
                     "HireManager",
                     "Division " + division + " already have a manager.");
             }
-            Division target = this.Divisions.Where(d => d.Name.Equals(division)).FirstOrDefault();
+			Division target = Divisions.FirstOrDefault(d => d.Name.Equals(division));
             if (target == null)
             {
                 throw new
-                    PreconditionException(this.GetType().Name,
+                    PreconditionException(GetType().Name,
                     "HireManager",
                     "Division " + division + " doesn't exist.");
             }
             else
             {
-                this.Managers.Add(target, manager);
+                Managers.Add(target, manager);
             }
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name, "HireManager", "after");
+                throw new InvariantException(GetType().Name, "HireManager", "after");
             }
         }
 
@@ -221,24 +202,24 @@ namespace cs742company.SpecificationModel
         {
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name, "FireManager", "before");
+                throw new InvariantException(GetType().Name, "FireManager", "before");
             }
-            Division target = this.Managers.Keys.Where(d => d.Name.Equals(division)).FirstOrDefault();
+			Division target = Managers.Keys.FirstOrDefault(d => d.Name.Equals(division));
             if (target == null)
             {
                 throw new
-                    PreconditionException(this.GetType().Name,
+                    PreconditionException(GetType().Name,
                     "HireManager",
                     "Division " + division + " doesn't exist.");
             }
             else
             {
-                this.Managers = 
-                    this.Managers.Where(m => !m.Key.Name.Equals(division)).ToDictionary(m => m.Key, m => m.Value);
+                Managers = 
+                    Managers.Where(m => !m.Key.Name.Equals(division)).ToDictionary(m => m.Key, m => m.Value);
             }
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name, "FireManager", "after");
+                throw new InvariantException(GetType().Name, "FireManager", "after");
             }
         }
 
@@ -246,14 +227,14 @@ namespace cs742company.SpecificationModel
         {
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name, "MoveManagerFromOneDivisionToAnother", "before");
+                throw new InvariantException(GetType().Name, "MoveManagerFromOneDivisionToAnother", "before");
             }
-            Division source = this.Divisions.Where(s => s.Name.Equals(from)).FirstOrDefault();
-            Division destination = this.Divisions.Where(d => d.Name.Equals(to)).FirstOrDefault();
+			Division source = Divisions.FirstOrDefault(s => s.Name.Equals(from));
+			Division destination = Divisions.FirstOrDefault(d => d.Name.Equals(to));
             if (source == null)
             {
                 throw new
-                    PreconditionException(this.GetType().Name,
+                    PreconditionException(GetType().Name,
                     "MoveManagerFromOneDivisionToAnother",
                     "Division " + from + " doesn't exist.");
             }
@@ -262,37 +243,37 @@ namespace cs742company.SpecificationModel
                 if (destination == null)
                 {
                     throw new
-                    PreconditionException(this.GetType().Name,
+                    PreconditionException(GetType().Name,
                     "MoveManagerFromOneDivisionToAnother",
                     "Division " + to + " doesn't exist.");
                 }
                 else
                 {
-                    IEnumerable<Division> domManagerD = this.Managers.Keys.Where(dm => dm.Name.Equals(destination.Name));
+                    IEnumerable<Division> domManagerD = Managers.Keys.Where(dm => dm.Name.Equals(destination.Name));
                     if (domManagerD.Any())
                     {
                         throw new
-                        PreconditionException(this.GetType().Name,
+                        PreconditionException(GetType().Name,
                         "MoveManagerFromOneDivisionToAnother",
                         "Division " + domManagerD.FirstOrDefault().Name + " already have a manager.");
                     }
                     else
                     {
-                        IEnumerable<Division> domManagerS = this.Managers.Keys.Where(dm => dm.Name.Equals(source.Name));
+                        IEnumerable<Division> domManagerS = Managers.Keys.Where(dm => dm.Name.Equals(source.Name));
                         if (!domManagerS.Any())
                         {
                             throw new
-                            PreconditionException(this.GetType().Name,
+                            PreconditionException(GetType().Name,
                             "MoveManagerFromOneDivisionToAnother",
                             "Division " + domManagerD.FirstOrDefault().Name + " doesn't have any manager.");
                         }
                         else
                         {
-                            this.Managers =
-                            this.Managers.Where
+                            Managers =
+                            Managers.Where
                             (m => !m.Key.Name.Equals(source.Name)).ToDictionary
                             (m => m.Key, m => m.Value);
-                            this.Managers.Add(destination, this.Managers[source]);
+                            Managers.Add(destination, Managers[source]);
                         }
                     }
                 }
@@ -300,7 +281,7 @@ namespace cs742company.SpecificationModel
 
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name, "MoveManagerFromOneDivisionToAnother", "after");
+                throw new InvariantException(GetType().Name, "MoveManagerFromOneDivisionToAnother", "after");
             }
         }
 
@@ -308,23 +289,23 @@ namespace cs742company.SpecificationModel
         {
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name,
+                throw new InvariantException(GetType().Name,
                     "HireEmployee", "before");
             }
-            Division d = this.Divisions.Where(div => div.Name.Equals(division)).FirstOrDefault();
+			Division d = Divisions.FirstOrDefault(div => div.Name.Equals(division));
             if (d == null)
             {
                 throw new
-                PreconditionException(this.GetType().Name,
+                PreconditionException(GetType().Name,
                 "HireEmployee",
                 "Division " + division + " doesn't exist.");
             }
             else
             {
-                if (this.Divisions.Any(dOther => dOther.Employees.Contains(newEmployee)))
+                if (Divisions.Any(dOther => dOther.Employees.Contains(newEmployee)))
                 {
                     throw new
-                    PreconditionException(this.GetType().Name,
+                    PreconditionException(GetType().Name,
                     "HireEmployee",
                     "Employee " + newEmployee.Name + " already exist in other division.");
                 }
@@ -336,7 +317,7 @@ namespace cs742company.SpecificationModel
 
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name,
+                throw new InvariantException(GetType().Name,
                     "HireEmployee", "after");
             }
         }
@@ -345,14 +326,14 @@ namespace cs742company.SpecificationModel
         {
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name,
+                throw new InvariantException(GetType().Name,
                     "FireEmployee", "before");
             }
-            Division d = this.Divisions.Where(div => div.Name.Equals(division)).FirstOrDefault();
+			Division d = Divisions.FirstOrDefault(div => div.Name.Equals(division));
             if (d == null)
             {
                 throw new
-                PreconditionException(this.GetType().Name,
+                PreconditionException(GetType().Name,
                 "FireEmployee",
                 "Division " + division + " doesn't exist.");
             }
@@ -363,7 +344,7 @@ namespace cs742company.SpecificationModel
 
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name,
+                throw new InvariantException(GetType().Name,
                     "FireEmployee", "after");
             }
         }
@@ -372,14 +353,14 @@ namespace cs742company.SpecificationModel
         {
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name, "MoveEmployeeFromOneDivisionToAnother", "before");
+                throw new InvariantException(GetType().Name, "MoveEmployeeFromOneDivisionToAnother", "before");
             }
-            Division source = this.Divisions.Where(s => s.Name.Equals(from)).FirstOrDefault();
-            Division destination = this.Divisions.Where(d => d.Name.Equals(to)).FirstOrDefault();
+			Division source = Divisions.FirstOrDefault(s => s.Name.Equals(from));
+			Division destination = Divisions.FirstOrDefault(d => d.Name.Equals(to));
             if (source == null)
             {
                 throw new
-                    PreconditionException(this.GetType().Name,
+                    PreconditionException(GetType().Name,
                     "MoveEmployeeFromOneDivisionToAnother",
                     "Division " + from + " doesn't exist.");
             }
@@ -388,7 +369,7 @@ namespace cs742company.SpecificationModel
                 if (destination == null)
                 {
                     throw new
-                    PreconditionException(this.GetType().Name,
+                    PreconditionException(GetType().Name,
                     "MoveEmployeeFromOneDivisionToAnother",
                     "Division " + to + " doesn't exist.");
                 }
@@ -397,7 +378,7 @@ namespace cs742company.SpecificationModel
                     if (!source.Employees.Contains(employee))
                     {
                         throw new
-                        PreconditionException(this.GetType().Name,
+                        PreconditionException(GetType().Name,
                         "MoveEmployeeFromOneDivisionToAnother",
                         "Employee " + employee.Name + " doesn't exist in Division "
                         + source.Name + ".");
@@ -407,15 +388,15 @@ namespace cs742company.SpecificationModel
                         if (destination.Employees.Contains(employee))
                         {
                             throw new
-                            PreconditionException(this.GetType().Name,
+                            PreconditionException(GetType().Name,
                             "MoveEmployeeFromOneDivisionToAnother",
                             "Employee " + employee.Name + " already exist in Division "
                             + destination.Name + ".");
                         }
                         else
                         {
-                            this.Divisions.Remove(source);
-                            this.Divisions.Remove(destination);
+                            Divisions.Remove(source);
+                            Divisions.Remove(destination);
 
                             Division newSource = new Division();
                             Division newDestination = new Division();
@@ -437,8 +418,8 @@ namespace cs742company.SpecificationModel
                             newDestination.ProjectHours = destination.ProjectHours;
                             newDestination.EmployeeHours = destination.EmployeeHours;
 
-                            this.Divisions.Add(newSource);
-                            this.Divisions.Add(newDestination);
+                            Divisions.Add(newSource);
+                            Divisions.Add(newDestination);
                         }
                     }
                 }
@@ -446,7 +427,7 @@ namespace cs742company.SpecificationModel
 
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name, "MoveEmployeeFromOneDivisionToAnother", "after");
+                throw new InvariantException(GetType().Name, "MoveEmployeeFromOneDivisionToAnother", "after");
             }
         }
 
@@ -454,32 +435,32 @@ namespace cs742company.SpecificationModel
         {
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name,
+                throw new InvariantException(GetType().Name,
                     "AddNewProjectToDivision", "before");
             }
 
             if (estimated < 1)
             {
                 throw new
-                PreconditionException(this.GetType().Name,
+                PreconditionException(GetType().Name,
                 "AddNewProjectToDivision",
                 "Estimated time is less than 1.");
             }
 
-            Division d = this.Divisions.Where(div => div.Name.Equals(division)).FirstOrDefault();
+			Division d = Divisions.FirstOrDefault(div => div.Name.Equals(division));
             if (d == null)
             {
                 throw new
-                PreconditionException(this.GetType().Name,
+                PreconditionException(GetType().Name,
                 "AddNewProjectToDivision",
                 "Division " + d.Name + " doesn't exist.");
             }
             else
             {
-                if (!isDivisionOperational(this.Managers, d))
+                if (!isDivisionOperational(Managers, d))
                 {
                     throw new
-                    PreconditionException(this.GetType().Name,
+                    PreconditionException(GetType().Name,
                     "AddNewProjectToDivision",
                     "Division " + d.Name + " isn't operational.");
                 }
@@ -490,7 +471,7 @@ namespace cs742company.SpecificationModel
             }
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name,
+                throw new InvariantException(GetType().Name,
                     "AddNewProjectToDivision", "after");
             }
         }
@@ -499,23 +480,23 @@ namespace cs742company.SpecificationModel
         {
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name,
+                throw new InvariantException(GetType().Name,
                     "RemoveProjectFromDivision", "before");
             }
-            Division d = this.Divisions.Where(div => div.Name.Equals(division)).FirstOrDefault();
+			Division d = Divisions.FirstOrDefault(div => div.Name.Equals(division));
             if (d == null)
             {
                 throw new
-                PreconditionException(this.GetType().Name,
+                PreconditionException(GetType().Name,
                 "RemoveProjectFromDivision",
                 "Division " + d.Name + " doesn't exist.");
             }
             else
             {
-                if (!isDivisionOperational(this.Managers, d))
+                if (!isDivisionOperational(Managers, d))
                 {
                     throw new
-                    PreconditionException(this.GetType().Name,
+                    PreconditionException(GetType().Name,
                     "RemoveProjectFromDivision",
                     "Division " + d.Name + " isn't operational.");
                 }
@@ -526,7 +507,7 @@ namespace cs742company.SpecificationModel
             }
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name,
+                throw new InvariantException(GetType().Name,
                     "RemoveProjectFromDivision", "after");
             }
         }
@@ -535,24 +516,24 @@ namespace cs742company.SpecificationModel
         {
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name,
+                throw new InvariantException(GetType().Name,
                     "AssignProjectWithinDivision", "before");
             }
 
-            Division d = this.Divisions.Where(div => div.Name.Equals(division)).FirstOrDefault();
+			Division d = Divisions.FirstOrDefault(div => div.Name.Equals(division));
             if (d == null)
             {
                 throw new
-                PreconditionException(this.GetType().Name,
+                PreconditionException(GetType().Name,
                 "AssignProjectWithinDivision",
                 "Division " + d.Name + " doesn't exist.");
             }
             else
             {
-                if (!isDivisionOperational(this.Managers, d))
+                if (!isDivisionOperational(Managers, d))
                 {
                     throw new
-                    PreconditionException(this.GetType().Name,
+                    PreconditionException(GetType().Name,
                     "AssignProjectWithinDivision",
                     "Division " + d.Name + " isn't operational.");
                 }
@@ -564,7 +545,7 @@ namespace cs742company.SpecificationModel
 
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name,
+                throw new InvariantException(GetType().Name,
                     "AssignProjectWithinDivision", "after");
             }
         }
@@ -573,24 +554,24 @@ namespace cs742company.SpecificationModel
         {
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name,
+                throw new InvariantException(GetType().Name,
                     "DeAssignProjectWithinDivision", "before");
             }
 
-            Division d = this.Divisions.Where(div => div.Name.Equals(division)).FirstOrDefault();
+			Division d = Divisions.FirstOrDefault(div => div.Name.Equals(division));
             if (d == null)
             {
                 throw new
-                PreconditionException(this.GetType().Name,
+                PreconditionException(GetType().Name,
                 "DeAssignProjectWithinDivision",
                 "Division " + d.Name + " doesn't exist.");
             }
             else
             {
-                if (!isDivisionOperational(this.Managers, d))
+                if (!isDivisionOperational(Managers, d))
                 {
                     throw new
-                    PreconditionException(this.GetType().Name,
+                    PreconditionException(GetType().Name,
                     "DeAssignProjectWithinDivision",
                     "Division " + d.Name + " isn't operational.");
                 }
@@ -602,7 +583,7 @@ namespace cs742company.SpecificationModel
 
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name,
+                throw new InvariantException(GetType().Name,
                     "DeAssignProjectWithinDivision", "after");
             }
         }
@@ -611,31 +592,31 @@ namespace cs742company.SpecificationModel
         {
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name,
+                throw new InvariantException(GetType().Name,
                     "EmployeeAddingHoursToProjectInDivision", "before");
             }
             if (hoursToAdd < 1)
             {
                 throw new
-                PreconditionException(this.GetType().Name,
+                PreconditionException(GetType().Name,
                 "EmployeeAddingHoursToProjectInDivision",
                 "Hours to add is less than 1.");
             }
 
-            Division d = this.Divisions.Where(div => div.Name.Equals(division)).FirstOrDefault();
+			Division d = Divisions.FirstOrDefault(div => div.Name.Equals(division));
             if (d == null)
             {
                 throw new
-                PreconditionException(this.GetType().Name,
+                PreconditionException(GetType().Name,
                 "EmployeeAddingHoursToProjectInDivision",
                 "Division " + d.Name + " doesn't exist.");
             }
             else
             {
-                if (!isDivisionOperational(this.Managers, d))
+                if (!isDivisionOperational(Managers, d))
                 {
                     throw new
-                    PreconditionException(this.GetType().Name,
+                    PreconditionException(GetType().Name,
                     "EmployeeAddingHoursToProjectInDivision",
                     "Division " + d.Name + " isn't operational.");
                 }
@@ -647,7 +628,7 @@ namespace cs742company.SpecificationModel
 
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name,
+                throw new InvariantException(GetType().Name,
                     "EmployeeAddingHoursToProjectInDivision", "after");
             }
         }
@@ -658,14 +639,14 @@ namespace cs742company.SpecificationModel
             int totalHoursSpent;
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name,
+                throw new InvariantException(GetType().Name,
                     "CompleteProject", "before");
             }
-            HashSet<Division> divisionSubset = new HashSet<Division>(this.Divisions.Where(div => div.Projects.Contains(project)));
+            HashSet<Division> divisionSubset = new HashSet<Division>(Divisions.Where(div => div.Projects.Contains(project)));
             if (!divisionSubset.Any())
             {
                 throw new
-                PreconditionException(this.GetType().Name,
+                PreconditionException(GetType().Name,
                 "CompleteProject",
                 "Project " + project.Name + " doesn't exist.");
             }
@@ -676,7 +657,7 @@ namespace cs742company.SpecificationModel
             }
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name,
+                throw new InvariantException(GetType().Name,
                     "CompleteProject", "after");
             }
             return "totalEstimatedHours: " + totalEstimatedHours 
@@ -688,17 +669,17 @@ namespace cs742company.SpecificationModel
             int hours;
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name,
+                throw new InvariantException(GetType().Name,
                     "ReportHoursSpentbyEmployeeOnProject", "before");
             }
-            Division target = this.Divisions.Where(d =>
+			Division target = Divisions.FirstOrDefault(d =>
                      d.EmployeeHours.Any(empProj =>
                      empProj.Employee.Equals(employee) &&
-                     empProj.Project.Equals(project))).FirstOrDefault();
+                     empProj.Project.Equals(project)));
             if (target == null)
             {
                 throw new
-                PreconditionException(this.GetType().Name,
+                PreconditionException(GetType().Name,
                 "ReportHoursSpentbyEmployeeOnProject",
                 "The relation between Project " + project.Name
                 + " and Employee " + employee.Name + " doesn't exist in Division "
@@ -712,7 +693,7 @@ namespace cs742company.SpecificationModel
             }
             if (!stateInvariantCheck())
             {
-                throw new InvariantException(this.GetType().Name,
+                throw new InvariantException(GetType().Name,
                     "ReportHoursSpentbyEmployeeOnProject", "after");
             }
             return hours;
