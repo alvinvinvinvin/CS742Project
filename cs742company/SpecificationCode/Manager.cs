@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace cs742company.SpecificationModel
+namespace cs742company.SpecificationCode
 {
-    public class Employee : System.Object, IComparable
+    public class Manager : System.Object, IComparable
     {
 
 		public NAME Name {
@@ -14,7 +14,7 @@ namespace cs742company.SpecificationModel
 			set;
 		}
 
-        public Employee(String name) 
+        public Manager(String name) 
         {
 			this.Name = new NAME(name);
         }
@@ -22,14 +22,14 @@ namespace cs742company.SpecificationModel
         int IComparable.CompareTo(System.Object that)
         {
             if (that == null) return 1;
-            Employee otherEmployee = that as Employee;
-            if (otherEmployee != null)
+            Manager otherManager = that as Manager;
+            if (otherManager != null)
             {
-                return this.Name.getNAME().CompareTo(otherEmployee.Name.getNAME());
+                return this.Name.getNAME().CompareTo(otherManager.Name.getNAME());
             }
             else
             {
-                throw new ArgumentException("Object is not an Employee");
+                throw new ArgumentException("Object is not a Manager");
             }
         }
 
@@ -42,15 +42,16 @@ namespace cs742company.SpecificationModel
             }
 
             // If parameter cannot be cast to Employee return false.
-            Employee e = obj as Employee;
-            if ((System.Object)e == null)
+            Manager m = obj as Manager;
+            if ((System.Object)m == null)
             {
                 return false;
             }
 
             // Return true if the fields match:
-            return this.Name.getNAME() == e.Name.getNAME();
+            return this.Name.getNAME() == m.Name.getNAME();
         }
+
 
         /// <summary>
         /// Also have to override gethashcode method to ensure object itself is unique
@@ -61,6 +62,5 @@ namespace cs742company.SpecificationModel
         {
             return this.Name.getNAME().GetHashCode();
         }
-
     }
 }

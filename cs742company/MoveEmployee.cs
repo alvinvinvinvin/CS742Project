@@ -1,4 +1,4 @@
-﻿using cs742company.SpecificationModel;
+﻿using cs742company.SpecificationCode;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace cs742company.SpecificationModel
+namespace cs742company.SpecificationCode
 {
     public class PostconditionException : Exception
     {

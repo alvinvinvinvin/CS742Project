@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace cs742company.SpecificationModel
+namespace cs742company.SpecificationCode
 {
-    public class Manager : System.Object, IComparable
+    public class Project : System.Object, IComparable
     {
 
 		public NAME Name {
@@ -14,22 +14,22 @@ namespace cs742company.SpecificationModel
 			set;
 		}
 
-        public Manager(String name) 
+        public Project(String name) 
         {
 			this.Name = new NAME(name);
         }
 
-        int IComparable.CompareTo(System.Object that)
+        int IComparable.CompareTo(object that)
         {
             if (that == null) return 1;
-            Manager otherManager = that as Manager;
-            if (otherManager != null)
+            Project otherProject = that as Project;
+            if (otherProject != null)
             {
-                return this.Name.getNAME().CompareTo(otherManager.Name.getNAME());
+                return this.Name.getNAME().CompareTo(otherProject.Name.getNAME());
             }
             else
             {
-                throw new ArgumentException("Object is not a Manager");
+                throw new ArgumentException("Object is not a Project");
             }
         }
 
@@ -42,22 +42,16 @@ namespace cs742company.SpecificationModel
             }
 
             // If parameter cannot be cast to Employee return false.
-            Manager m = obj as Manager;
-            if ((System.Object)m == null)
+            Project p = obj as Project;
+            if ((System.Object)p == null)
             {
                 return false;
             }
 
             // Return true if the fields match:
-            return this.Name.getNAME() == m.Name.getNAME();
+            return this.Name.getNAME() == p.Name.getNAME();
         }
 
-
-        /// <summary>
-        /// Also have to override gethashcode method to ensure object itself is unique
-        /// during comparison.
-        /// </summary>
-        /// <returns></returns>
         public override int GetHashCode()
         {
             return this.Name.getNAME().GetHashCode();

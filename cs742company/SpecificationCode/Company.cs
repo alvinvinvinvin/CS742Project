@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace cs742company.SpecificationModel
+namespace cs742company.SpecificationCode
 {
     public class Company
     {
@@ -293,15 +293,18 @@ namespace cs742company.SpecificationModel
                         else
                         {
                             //excepting no-need elements first and then adding new one
-                            Managers =
-                            Managers.Where
-                            (m => !m.Key.Name.Equals(source.Name)).ToDictionary
-                            (m => m.Key, m => m.Value);
+
                             if (Managers.ContainsKey(source))
+                            {
+                                //Copy the manager to destination division.
                                 Managers.Add(destination, Managers[source]);
+                                //Remove manager from original division and update Managers set.
+                                Managers = Managers.Where(m => !m.Key.Name.Equals(source.Name)).
+                                    ToDictionary(m => m.Key, m => m.Value);
+                            }
                             else
                             {
-                                return;
+                                throw new InvariantException(GetType().Name, "MoveManagerFromOneDivisionToAnother", "after");
                             }
                         }
                     }
