@@ -122,13 +122,13 @@ namespace cs742console.SpecificationModel
             // The state invariant asserts that the domain of estimatedHours 
             // must be equal to projects
             //
-            if (EstimatedHours.Keys.Equals(Projects))
+            if (new HashSet<Project>(EstimatedHours.Keys).SetEquals(Projects))
             {
                 //
                 // The state invariant asserts that the domain of projectHours
                 // must be equal to projects
                 //
-                if (ProjectHours.Keys.Equals(Projects))
+                if (new HashSet<Project>(ProjectHours.Keys).SetEquals(Projects))
                 {
 
                     foreach(EmployeeProjectPair e1 in EmployeeHours)
@@ -165,14 +165,14 @@ namespace cs742console.SpecificationModel
                                     }
                                 }
                             }
-                            return false;
+                            return true;
                         }
                         else
                         {
                             return false;
                         }
                     }
-                    return false;
+                    return true;
                 }
                 else 
                 {
@@ -190,15 +190,23 @@ namespace cs742console.SpecificationModel
         /// INIT statement
         /// </summary>
         /// <param name="division_name"></param>
-        public Division() { }
-        public Division(String division_name) 
+        public Division()
         {
-			Name = new DIVISION_NAME(division_name);
-            Employees = null;
-            Projects = null;
-            EmployeeHours = null;
-            ProjectHours = null;
-            EmployeeHours = null;
+            Name = new DIVISION_NAME("");
+            Employees = new HashSet<Employee>();
+            Projects = new HashSet<Project>();
+            EmployeeHours = new HashSet<EmployeeProjectPair>();
+            EstimatedHours = new Dictionary<Project, int>();
+            ProjectHours = new Dictionary<Project, int>();
+        }
+        public Division(DIVISION_NAME division_name) 
+        {
+			Name = division_name;
+            Employees = new HashSet<Employee>();
+            Projects = new HashSet<Project>();
+            EmployeeHours = new HashSet<EmployeeProjectPair>();
+            EstimatedHours = new Dictionary<Project, int>();
+            ProjectHours = new Dictionary<Project,int>();
         }
 
         public void AddEmployee(Employee newEmployee)

@@ -136,7 +136,21 @@ namespace ConsoleTesting
             //p1.TestHashSet.TrimExcess();
             //p1.TestHashSet = new HashSet<String>();
             Console.WriteLine(p1.TestHashSet.Count);
+            List<String> newList = new List<string>();
+            HashSet<String> test1 = new HashSet<string>(newList);
+            HashSet<String> test2 = new HashSet<string>();
+            HashSet<String> test3 = new HashSet<string>();
+            HashSet<String> test4 = new HashSet<string>();
+            test2.Add("1");
+            test2.Add("2");
+            Console.WriteLine("isSubSetOf: {0}", test1.IsSubsetOf(test2));
+            Console.WriteLine("intersect: {0}", test3.Intersect(test4).Any());
 
+            Dictionary<String, int> test5 = new Dictionary<string, int>();
+            HashSet<String> test6 = new HashSet<string>();
+            Console.WriteLine("equals: {0}", test5.Keys.Equals(test6));
+            HashSet<String> test7 = new HashSet<string>(test5.Keys);
+            Console.WriteLine("setEquals: {0}", test7.SetEquals(test6));
 			//this.TestHashSet = new HashSet<string> (new List<String>(3));
 			//Console.WriteLine (TestHashSet.Count);
             Console.ReadKey();

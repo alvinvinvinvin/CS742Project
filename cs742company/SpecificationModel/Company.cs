@@ -128,7 +128,7 @@ namespace cs742company.SpecificationModel
 		/// 
 		/// </summary>
 
-		public Company(String[] divisionsNames)
+		public Company(params String[] divisionsNames)
         {
             if (divisionsNames.Length < 1)
             {

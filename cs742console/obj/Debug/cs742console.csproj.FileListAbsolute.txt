@@ -1,0 +1,5 @@
+C:\Users\alvinchen\documents\visual studio 2013\Projects\cs742company\cs742console\bin\Debug\cs742console.exe
+C:\Users\alvinchen\documents\visual studio 2013\Projects\cs742company\cs742console\bin\Debug\cs742console.pdb
+C:\Users\alvinchen\documents\visual studio 2013\Projects\cs742company\cs742console\obj\Debug\cs742console.exe
+C:\Users\alvinchen\documents\visual studio 2013\Projects\cs742company\cs742console\obj\Debug\cs742console.pdb
+C:\Users\alvinchen\documents\visual studio 2013\Projects\cs742company\cs742console\obj\Debug\cs742console.csprojResolveAssemblyReference.cache
