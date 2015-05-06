@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows;
 
 namespace cs742company
 {
@@ -85,36 +86,16 @@ namespace cs742company
 
         }
 
-        //private void ReadFile_Click(object sender, EventArgs e)
-        //{
-        //    Stream myStream = null;
-        //    OpenFileDialog openFileDialog1 = new OpenFileDialog();
+        public class ComboboxItem
+        {
+            public string Text { get; set; }
+            public object Value { get; set; }
 
-        //    openFileDialog1.InitialDirectory = "c:\\";
-        //    openFileDialog1.Filter = "txt files (*.txt)|*.txt";
-        //    openFileDialog1.FilterIndex = 1;
-        //    openFileDialog1.RestoreDirectory = true;
-
-        //    if (openFileDialog1.ShowDialog() == DialogResult.OK)
-        //    {
-        //        try
-        //        {
-        //            if ((myStream = openFileDialog1.OpenFile()) != null)
-        //            {
-        //                using (myStream)
-        //                {
-        //                    TextReader tr = new StreamReader(myStream);
-        //                    ExceptionReportor.Text = tr.ReadToEnd();
-        //                    // Insert code to read the stream here.
-        //                }
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            ExceptionReportor.Text ="Error: Could not read file from disk. Original error: " + ex.Message;
-        //        }
-        //    }
-        //}
+            public override string ToString()
+            {
+                return Text;
+            }
+        }
 
         private void initToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -124,7 +105,10 @@ namespace cs742company
                 ExceptionReportor.Text = "Successfully initialized company!";
                 foreach (Division d in c.Divisions)
                 {
-                    cbb_divisions.Items.Add(d.Name.getDIVISION_NAME());
+                    ComboboxItem item = new ComboboxItem();
+                    item.Value = d;
+                    item.Text = d.Name.getDIVISION_NAME();
+                    cbb_divisions.Items.Add(item);
                 }
             }
             catch (InvariantException iE)
@@ -327,5 +311,482 @@ namespace cs742company
             c.EmployeeAddingHoursToProjectInDivision(real_time_systems, ipp3_P, mk_E, 3);
 
         }
+        private void cbb_divisions_SelectedValueChanged(object sender, EventArgs e)
+        {
+            ComboboxItem item = cbb_divisions.SelectedItem as ComboboxItem;
+            tbox_managerName.Text = c.Managers[(item.Value as Division)].Name.getNAME();
+            tbox_employees.Text = string.Empty;
+            foreach (Employee employee in (item.Value as Division).Employees)
+            {
+                tbox_employees.Text += employee.Name.getNAME()+"\r\n";
+            }
+            cbb_projects.Items.Clear();
+            foreach (Project pro in (item.Value as Division).Projects)
+            {
+                ComboboxItem project = new ComboboxItem();
+                project.Text = pro.Name.getNAME();
+                project.Value = pro;
+                cbb_projects.Items.Add(project);
+            }
+        }
+
+        private void cbb_projects_SelectedValueChanged(object sender, EventArgs e)
+        {
+            ComboboxItem project = cbb_projects.SelectedItem as ComboboxItem;
+            ComboboxItem division = cbb_divisions.SelectedItem as ComboboxItem;
+            tbox_estimatedH.Text =
+                (division.Value as Division).EstimatedHours[(project.Value as Project)].ToString();
+            tbox_employeeOfProject.Text = string.Empty;
+            foreach (EmployeeProjectPair epp in (division.Value as Division).EmployeeHours)
+            {
+                tbox_employeeOfProject.Text += epp.Employee.Name.getNAME() + "    "
+                    + epp.HoursSpent+"\r\n";
+            }
+        }
+
+        private void hireManagerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddName an = new AddName();
+            DialogResult dr = an.ShowDialog(this);
+            if (dr == DialogResult.Cancel)
+            {
+                an.Close();
+            }
+            else if (dr == DialogResult.OK)
+            {
+                string managerName = an.getName();
+                Manager newManager = new Manager(managerName);
+                DIVISION_NAME dvn = 
+                    new DIVISION_NAME((cbb_divisions.SelectedItem as ComboboxItem).Text);
+                try 
+                {
+                    c.HireManager(newManager, dvn);
+                }
+                catch (InvariantException iE)
+                {
+                    ExceptionReportor.Text = iE.erroMessage();
+                }
+                catch (PreconditionException preE)
+                {
+                    ExceptionReportor.Text = preE.errorMessage();
+                }
+                
+            }
+            else 
+            {
+                MessageBox.Show("Error.");
+            }
+            
+        }
+
+        private void fireManagerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try 
+            {
+                DIVISION_NAME dvn = 
+                    new DIVISION_NAME((cbb_divisions.SelectedItem as ComboboxItem).Text);
+                c.FireManager(dvn);
+            }
+            catch (InvariantException iE)
+            {
+                ExceptionReportor.Text = iE.erroMessage();
+            }
+            catch (PreconditionException preE)
+            {
+                ExceptionReportor.Text = preE.errorMessage();
+            }
+        }
+
+        private void moveManagerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MoveManager mm = new MoveManager(c.Divisions);
+            DialogResult dr = mm.ShowDialog(this);
+            if (dr == DialogResult.Cancel)
+            {
+                mm.Close();
+            }
+            else if (dr == DialogResult.OK)
+            {
+                DIVISION_NAME from = mm.getfrom();
+                DIVISION_NAME to = mm.getto();
+                try
+                {
+                    c.MoveManagerFromOneDivisionToAnother(from,to);
+                }
+                catch (InvariantException iE)
+                {
+                    ExceptionReportor.Text = iE.erroMessage();
+                }
+                catch (PreconditionException preE)
+                {
+                    ExceptionReportor.Text = preE.errorMessage();
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("Error.");
+            }
+
+        }
+
+        private void hireEmployeeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddName an = new AddName();
+            DialogResult dr = an.ShowDialog(this);
+            if (dr == DialogResult.Cancel)
+            {
+                an.Close();
+            }
+            else if (dr == DialogResult.OK)
+            {
+                string employeeName = an.getName();
+                Employee newEmployee = new Employee(employeeName);
+                DIVISION_NAME dvn =
+                    new DIVISION_NAME((cbb_divisions.SelectedItem as ComboboxItem).Text);
+                try
+                {
+                    c.HireEmployee(dvn,newEmployee);
+                }
+                catch (InvariantException iE)
+                {
+                    ExceptionReportor.Text = iE.erroMessage();
+                }
+                catch (PreconditionException preE)
+                {
+                    ExceptionReportor.Text = preE.errorMessage();
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("Error.");
+            }
+        }
+
+        private void fireEmployeeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddName an = new AddName();
+            DialogResult dr = an.ShowDialog(this);
+            if (dr == DialogResult.Cancel)
+            {
+                an.Close();
+            }
+            else if (dr == DialogResult.OK)
+            {
+                string employeeName = an.getName();
+                Employee newEmployee = new Employee(employeeName);
+                DIVISION_NAME dvn =
+                    new DIVISION_NAME((cbb_divisions.SelectedItem as ComboboxItem).Text);
+                try
+                {
+                    c.FireEmployee(dvn, newEmployee);
+                }
+                catch (InvariantException iE)
+                {
+                    ExceptionReportor.Text = iE.erroMessage();
+                }
+                catch (PreconditionException preE)
+                {
+                    ExceptionReportor.Text = preE.errorMessage();
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("Error.");
+            }
+        }
+
+        private void moveEmployeeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MoveEmployee me = new MoveEmployee(c.Divisions);
+            DialogResult dr = me.ShowDialog(this);
+            if (dr == DialogResult.Cancel)
+            {
+                me.Close();
+            }
+            else if (dr == DialogResult.OK)
+            {
+                DIVISION_NAME from = me.getfrom();
+                DIVISION_NAME to = me.getto();
+                Employee employee = new Employee(me.getName());
+                try
+                {
+                    c.MoveEmployeeFromOneDivisionToAnother(from, to, employee);
+                }
+                catch (InvariantException iE)
+                {
+                    ExceptionReportor.Text = iE.erroMessage();
+                }
+                catch (PreconditionException preE)
+                {
+                    ExceptionReportor.Text = preE.errorMessage();
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("Error.");
+            }
+        }
+
+        static int tryToConvertInputToInt(String input)
+        {
+            int output;
+            bool result = Int32.TryParse(input, out output);
+            if (!result)
+            {
+                MessageBox.Show("not a valid number!");
+            }
+            return output;
+        }
+
+        private void addNewProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddNewProject anp = new AddNewProject();
+            DialogResult dr = anp.ShowDialog(this);
+            if (dr == DialogResult.Cancel)
+            {
+                anp.Close();
+            }
+            else if (dr == DialogResult.OK)
+            {
+                NAME projectName = anp.getProjectName();
+                string input = anp.getEstimatedHours();
+                int estimatedH = tryToConvertInputToInt(input);
+                if (projectName.getNAME() == string.Empty)
+                {
+                    MessageBox.Show("not valid name.");
+                }
+                else
+                {
+                    Project p = new Project(projectName.getNAME());
+                    DIVISION_NAME dvn =
+                    new DIVISION_NAME((cbb_divisions.SelectedItem as ComboboxItem).Text);
+                    try
+                    {
+                        c.AddNewProjectToDivision(dvn, p, estimatedH);
+                    }
+                    catch (InvariantException iE)
+                    {
+                        ExceptionReportor.Text = iE.erroMessage();
+                    }
+                    catch (PreconditionException preE)
+                    {
+                        ExceptionReportor.Text = preE.errorMessage();
+                    }
+ 
+                }
+            }
+            else
+            {
+                MessageBox.Show("Error.");
+            }
+        }
+
+        private void removeProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DIVISION_NAME dvn =
+                    new DIVISION_NAME((cbb_divisions.SelectedItem as ComboboxItem).Text);
+            Project p = 
+                new Project((cbb_projects.SelectedItem as ComboboxItem).Text);
+            try
+            {
+                DialogResult dr = 
+                    MessageBox.Show("Are you sure you want to delete this project?","Delete Project", MessageBoxButtons.YesNo);
+                if (dr == DialogResult.Yes)
+                {
+                    c.RemoveProjectFromDivision(dvn, p);
+                }
+                else if (dr == DialogResult.No)
+                {
+
+                }
+            }
+            catch (InvariantException iE)
+            {
+                ExceptionReportor.Text = iE.erroMessage();
+            }
+            catch (PreconditionException preE)
+            {
+                ExceptionReportor.Text = preE.errorMessage();
+            }
+        }
+
+        private void assignProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddName an = new AddName();
+            DialogResult dr = an.ShowDialog(this);
+            if (dr == DialogResult.Cancel)
+            {
+                an.Close();
+            }
+            else if (dr == DialogResult.OK)
+            {
+                string employeeName = an.getName();
+                Employee newEmployee = new Employee(employeeName);
+                DIVISION_NAME dvn =
+                    new DIVISION_NAME((cbb_divisions.SelectedItem as ComboboxItem).Text);
+                Project p =
+               new Project((cbb_projects.SelectedItem as ComboboxItem).Text);
+                try
+                {
+                    c.AssignProjectWithinDivision(dvn,p,newEmployee);
+                }
+                catch (InvariantException iE)
+                {
+                    ExceptionReportor.Text = iE.erroMessage();
+                }
+                catch (PreconditionException preE)
+                {
+                    ExceptionReportor.Text = preE.errorMessage();
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("Error.");
+            }
+        }
+
+        private void deAssignProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddName an = new AddName();
+            DialogResult dr = an.ShowDialog(this);
+            if (dr == DialogResult.Cancel)
+            {
+                an.Close();
+            }
+            else if (dr == DialogResult.OK)
+            {
+                string employeeName = an.getName();
+                Employee newEmployee = new Employee(employeeName);
+                DIVISION_NAME dvn =
+                    new DIVISION_NAME((cbb_divisions.SelectedItem as ComboboxItem).Text);
+                Project p =
+               new Project((cbb_projects.SelectedItem as ComboboxItem).Text);
+                try
+                {
+                    c.DeAssignProjectWithinDivision(dvn, p, newEmployee);
+                }
+                catch (InvariantException iE)
+                {
+                    ExceptionReportor.Text = iE.erroMessage();
+                }
+                catch (PreconditionException preE)
+                {
+                    ExceptionReportor.Text = preE.errorMessage();
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("Error.");
+            }
+        }
+
+        private void employeeAddHoursToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            EmployeeAddHours eah = new EmployeeAddHours();
+            DialogResult dr = eah.ShowDialog(this);
+            if (dr == DialogResult.Cancel)
+            {
+                eah.Close();
+            }
+            else if (dr == DialogResult.OK)
+            {
+                string employeeName = eah.getName();
+                Employee newEmployee = new Employee(employeeName);
+                DIVISION_NAME dvn =
+                    new DIVISION_NAME((cbb_divisions.SelectedItem as ComboboxItem).Text);
+                Project p =
+               new Project((cbb_projects.SelectedItem as ComboboxItem).Text);
+                string input = eah.getHours();
+                int hoursToAdd = tryToConvertInputToInt(input);
+                try
+                {
+                    c.EmployeeAddingHoursToProjectInDivision(dvn, p, newEmployee, hoursToAdd);
+                }
+                catch (InvariantException iE)
+                {
+                    ExceptionReportor.Text = iE.erroMessage();
+                }
+                catch (PreconditionException preE)
+                {
+                    ExceptionReportor.Text = preE.errorMessage();
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("Error.");
+            }
+        }
+
+        private void completeProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Project p =
+               new Project((cbb_projects.SelectedItem as ComboboxItem).Text);
+            try
+            {
+                c.CompleteProject(p);
+            }
+            catch (InvariantException iE)
+            {
+                ExceptionReportor.Text = iE.erroMessage();
+            }
+            catch (PreconditionException preE)
+            {
+                ExceptionReportor.Text = preE.errorMessage();
+            }
+
+        }
+
+        private void reportHoursToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddName an = new AddName();
+            DialogResult dr = an.ShowDialog(this);
+            if (dr == DialogResult.Cancel)
+            {
+                an.Close();
+            }
+            else if (dr == DialogResult.OK)
+            {
+                string employeeName = an.getName();
+                Employee newEmployee = new Employee(employeeName);
+                
+                Project p =
+               new Project((cbb_projects.SelectedItem as ComboboxItem).Text);
+                int reportResult;
+                try
+                {
+                    reportResult = c.ReportHoursSpentbyEmployeeOnProject(newEmployee, p);
+                    MessageBox.Show(employeeName+" has spent "+
+                        reportResult+" hours on "+p.Name.getNAME()+".");
+                }
+                catch (InvariantException iE)
+                {
+                    ExceptionReportor.Text = iE.erroMessage();
+                }
+                catch (PreconditionException preE)
+                {
+                    ExceptionReportor.Text = preE.errorMessage();
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("Error.");
+            }
+        }
+
+
+
+
+
+
+
+
     }
 }

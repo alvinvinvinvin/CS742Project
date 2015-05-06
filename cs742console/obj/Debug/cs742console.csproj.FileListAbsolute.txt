@@ -2,3 +2,8 @@ C:\Users\alvinchen\documents\visual studio 2013\Projects\cs742company\cs742conso
 C:\Users\alvinchen\documents\visual studio 2013\Projects\cs742company\cs742console\bin\Debug\cs742console.pdb
 C:\Users\alvinchen\documents\visual studio 2013\Projects\cs742company\cs742console\obj\Debug\cs742console.exe
 C:\Users\alvinchen\documents\visual studio 2013\Projects\cs742company\cs742console\obj\Debug\cs742console.pdb
+C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742console\obj\Debug\cs742console.exe
+C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742console\obj\Debug\cs742console.pdb
+C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742console\bin\Debug\cs742console.exe
+C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742console\bin\Debug\cs742console.pdb
+C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742console\obj\Debug\cs742console.csprojResolveAssemblyReference.cache

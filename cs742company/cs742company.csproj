@@ -44,11 +44,41 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddName.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddName.Designer.cs">
+      <DependentUpon>AddName.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AddNewProject.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddNewProject.Designer.cs">
+      <DependentUpon>AddNewProject.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeAddHours.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EmployeeAddHours.Designer.cs">
+      <DependentUpon>EmployeeAddHours.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MoveEmployee.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MoveEmployee.Designer.cs">
+      <DependentUpon>MoveEmployee.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MoveManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MoveManager.Designer.cs">
+      <DependentUpon>MoveManager.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -61,8 +91,23 @@
     <Compile Include="SpecificationModel\PostconditionException.cs" />
     <Compile Include="SpecificationModel\PreconditionException.cs" />
     <Compile Include="SpecificationModel\Project.cs" />
+    <EmbeddedResource Include="AddName.resx">
+      <DependentUpon>AddName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AddNewProject.resx">
+      <DependentUpon>AddNewProject.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EmployeeAddHours.resx">
+      <DependentUpon>EmployeeAddHours.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MoveEmployee.resx">
+      <DependentUpon>MoveEmployee.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MoveManager.resx">
+      <DependentUpon>MoveManager.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

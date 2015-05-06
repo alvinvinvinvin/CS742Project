@@ -74,33 +74,33 @@ namespace cs742console
 			//Console.WriteLine ("Hello World!");
             initCompany();
 
-            //String input;
-            //int menuNumber;
-            //bool quit = false;
+            String input;
+            int menuNumber;
+            bool quit = false;
 
-            //while (!quit)
-            //{
-            //    printMenu();
-            //    do
-            //    {
-            //        input = Console.ReadLine();
-            //        menuNumber = tryToConvertInputToInt(input);
-            //        switch (menuNumber)
-            //        {
-            //            case 0:
-            //                Console.WriteLine("Thanks for using. Bye!");
-            //                quit = true;
-            //                break;
-            //            case 1:
-            //                break;
-            //            case 2:
-            //                break;
-            //            default:
-            //                Console.WriteLine("Please input valid command. ");
-            //                break;
-            //        }
-            //    } while (!quit); 
-            //}
+            while (!quit)
+            {
+                printMenu();
+                do
+                {
+                    input = Console.ReadLine();
+                    menuNumber = tryToConvertInputToInt(input);
+                    switch (menuNumber)
+                    {
+                        case 0:
+                            Console.WriteLine("Thanks for using. Bye!");
+                            quit = true;
+                            break;
+                        case 1:
+                            break;
+                        case 2:
+                            break;
+                        default:
+                            Console.WriteLine("Please input valid command. ");
+                            break;
+                    }
+                } while (!quit);
+            }
 
             Console.ReadKey();
 
@@ -290,7 +290,7 @@ namespace cs742console
                 c.AssignProjectWithinDivision(real_time_systems, psfwc_P, sp_E);
                 c.AssignProjectWithinDivision(real_time_systems, psfwc_P, mk_E);
 
-                c.EmployeeAddingHoursToProjectInDivision(marketing, psfwc_P, mr_E, 1);//Original test data was 0 which is invariant exception so I changed it to 1 to test.
+                c.EmployeeAddingHoursToProjectInDivision(marketing, psfwc_P, mr_E, 0);//Original test data was 0 which is invariant exception so I changed it to 1 to test.
                 c.EmployeeAddingHoursToProjectInDivision(data_quality, psfwc_P, sw_E, 10);
                 c.EmployeeAddingHoursToProjectInDivision(data_quality, psfwc_P, el_E, 32);
                 c.EmployeeAddingHoursToProjectInDivision(software_development, psfwc_P, sb_E, 40);
