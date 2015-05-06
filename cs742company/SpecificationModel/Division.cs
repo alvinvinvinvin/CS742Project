@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace cs742company.SpecificationModel
 {
-    class Division : System.Object, IComparable
+    public class Division : System.Object, IComparable
     {
 
 		public DIVISION_NAME Name {

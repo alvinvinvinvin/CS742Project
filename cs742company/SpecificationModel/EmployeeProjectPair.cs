@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace cs742company.SpecificationModel
 {
-    class EmployeeProjectPair : System.Object, IComparable
+    public class EmployeeProjectPair : System.Object, IComparable
     {
         private Employee employee;
 

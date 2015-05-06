@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace cs742company.SpecificationModel
 {
-    class InvariantException : Exception
+    public class InvariantException : Exception
     {
         private string ClassName {get;set;}
         private string Method {get;set;}

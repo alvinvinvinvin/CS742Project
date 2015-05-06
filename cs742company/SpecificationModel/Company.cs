@@ -4,8 +4,9 @@ using System.Linq;
 
 namespace cs742company.SpecificationModel
 {
-    class Company
+    public class Company
     {
+        // Fixed number of divisions
         int numberOfDivisions;
 
         public int NumberOfDivisions
@@ -13,7 +14,7 @@ namespace cs742company.SpecificationModel
             get { return numberOfDivisions; }
             set 
             {
-                if (value < 1)
+                if (value < 1)// number of division must be great than 1
                 {
                     throw new PreconditionException(GetType().Name, "setNumberOfDivisions", "Number of divisions is less than 1.");
                 }
@@ -23,12 +24,14 @@ namespace cs742company.SpecificationModel
 
         public int extractEstimatedHoursForProject(HashSet<Division> divisions, Project p) 
         {
+            //if division hashset is empty
             if (!divisions.Any())
             {
                 return 0;
             }
             else
             {
+                //if project doesn't exist in divisions set input
                 if (!divisions.Any(d => d.Projects.Contains(p)))
                 {
                     throw new
@@ -38,6 +41,7 @@ namespace cs742company.SpecificationModel
                 }
                 else
                 {
+                    //Recursively extracting estimated hours
                     IEnumerable<Division> target = divisions.Where(d => d.Projects.Contains(p));
                     divisions.ExceptWith(divisions.Where(d => d.Projects.Contains(p)));
                     return target.FirstOrDefault(d => d.Projects.Contains(p)).EstimatedHours[p]
@@ -103,13 +107,14 @@ namespace cs742company.SpecificationModel
                 {
                     foreach (Division d2 in Divisions)
                     {
-                
+                        //if two divisions are equal, their names must be same
                         if (d1.Equals(d2))
                         {
                             return d1.Name.Equals(d2.Name);
                         }
                         else
                         {
+                            //If two divisions are not same, their
                             if (!d1.Employees.Intersect(d2.Employees).Any())
                             {
                                 return true;

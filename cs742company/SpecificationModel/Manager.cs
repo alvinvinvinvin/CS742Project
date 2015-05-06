@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace cs742company.SpecificationModel
 {
-    class Manager : System.Object, IComparable
+    public class Manager : System.Object, IComparable
     {
 
 		public NAME Name {

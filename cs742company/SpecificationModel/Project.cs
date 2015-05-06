@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace cs742company.SpecificationModel
 {
-    class Project : System.Object, IComparable
+    public class Project : System.Object, IComparable
     {
 
 		public NAME Name {

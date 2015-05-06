@@ -16,7 +16,6 @@ C:\Users\alvinchen\documents\visual studio 2013\Projects\cs742company\cs742compa
 C:\Users\alvinchen\documents\visual studio 2013\Projects\cs742company\cs742company\obj\Debug\cs742company.exe
 C:\Users\alvinchen\documents\visual studio 2013\Projects\cs742company\cs742company\obj\Debug\cs742company.pdb
 C:\Users\alvinchen\documents\visual studio 2013\Projects\cs742company\cs742company\obj\Debug\cs742company.csprojResolveAssemblyReference.cache
-C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742company\obj\Debug\cs742company.HireManager.resources
 C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742company\obj\Debug\cs742company.AddName.resources
 C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742company\obj\Debug\cs742company.AddNewProject.resources
 C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742company\obj\Debug\cs742company.EmployeeAddHours.resources
