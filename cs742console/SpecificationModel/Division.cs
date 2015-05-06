@@ -368,7 +368,8 @@ namespace cs742console.SpecificationModel
             }
             IEnumerable<EmployeeProjectPair> target =
                 EmployeeHours.Where(empProj => empProj.Employee.Equals(employee) && empProj.Project.Equals(project));
-            if (!target.Any())
+			var enumerable = target.ToList ();
+            if (!enumerable.Any())
             {
                 throw new
                        PreconditionException(GetType().Name,
@@ -377,12 +378,12 @@ namespace cs742console.SpecificationModel
             }
             else
             {
-                EmployeeHours.ExceptWith(target);
+				EmployeeHours.ExceptWith((IEnumerable<EmployeeProjectPair>)enumerable);
                 EmployeeProjectPair newEmpProj = new EmployeeProjectPair();
                 newEmpProj.Employee = employee;
                 newEmpProj.Project = project;
                 newEmpProj.HoursSpent = 
-                    target.FirstOrDefault(empProj => empProj.Employee.Equals(employee) && empProj.Project.Equals(project)).HoursSpent + hoursToAdd;
+                    enumerable.FirstOrDefault(empProj => empProj.Employee.Equals(employee) && empProj.Project.Equals(project)).HoursSpent + hoursToAdd;
                 EmployeeHours.Add(newEmpProj);
                 ProjectHours[project] = ProjectHours[project] + hoursToAdd;
             }
