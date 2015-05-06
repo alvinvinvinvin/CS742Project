@@ -77,13 +77,15 @@ namespace cs742company.SpecificationModel
         }
 
 
-        public HashSet<Division> Divisions {
+        public HashSet<Division> Divisions 
+        {
 			get;
 			set;
 		}
-        public Dictionary<Division, Manager> Managers {
-				get;
-				set;
+        public Dictionary<Division, Manager> Managers 
+        {
+			get;
+			set;
 		}
         Boolean stateInvariantCheck() 
         {
@@ -101,20 +103,26 @@ namespace cs742company.SpecificationModel
                 {
                     foreach (Division d2 in Divisions)
                     {
-                        if (!d1.Employees.Intersect(d2.Employees).Any())
+                
+                        if (d1.Equals(d2))
                         {
-                            if (d1.Equals(d2))
-                            {
-                                return d1.Name.Equals (d2.Name);
-                            }
+                            return d1.Name.Equals(d2.Name);
                         }
                         else
                         {
-                            return false;
+                            if (!d1.Employees.Intersect(d2.Employees).Any())
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
                         }
+                      
                     }
                 }
-                return false;
+                return true;
             }
             else
             {
@@ -128,7 +136,7 @@ namespace cs742company.SpecificationModel
 		/// 
 		/// </summary>
 
-		public Company(params String[] divisionsNames)
+		public Company(params DIVISION_NAME[] divisionsNames)
         {
             if (divisionsNames.Length < 1)
             {
@@ -150,17 +158,17 @@ namespace cs742company.SpecificationModel
             
             // Dynamically generate division objects by names input.
             IDictionary<String, Division> col = new Dictionary<String, Division>();
-            foreach (string name in divisionsNames)
+            foreach (DIVISION_NAME name in divisionsNames)
             {
-				col[name] = new Division { Name = new DIVISION_NAME("Division " + name)};
+				col[name.getDIVISION_NAME()] = new Division { Name = name};
             }
 				
             // Pass generated division objects to divisions of this company
 			Divisions = new HashSet<Division> (col.Values);
-            Managers = null;
+            Managers = new Dictionary<Division,Manager>();
 		}
 
-        public void HireManager(Manager manager, String division) 
+        public void HireManager(Manager manager, DIVISION_NAME division) 
         {
             if (!stateInvariantCheck())
             {
@@ -198,7 +206,7 @@ namespace cs742company.SpecificationModel
             }
         }
 
-        public void FireManager(String division) 
+        public void FireManager(DIVISION_NAME division) 
         {
             if (!stateInvariantCheck())
             {
@@ -223,7 +231,7 @@ namespace cs742company.SpecificationModel
             }
         }
 
-        public void MoveManagerFromOneDivisionToAnother(String from, String to) 
+        public void MoveManagerFromOneDivisionToAnother(DIVISION_NAME from, DIVISION_NAME to) 
         {
             if (!stateInvariantCheck())
             {
@@ -285,7 +293,7 @@ namespace cs742company.SpecificationModel
             }
         }
 
-        public void HireEmployee(String division, Employee newEmployee) 
+        public void HireEmployee(DIVISION_NAME division, Employee newEmployee) 
         {
             if (!stateInvariantCheck())
             {
@@ -322,7 +330,7 @@ namespace cs742company.SpecificationModel
             }
         }
 
-        public void FireEmployee(String division, Employee employee)
+        public void FireEmployee(DIVISION_NAME division, Employee employee)
         {
             if (!stateInvariantCheck())
             {
@@ -349,7 +357,7 @@ namespace cs742company.SpecificationModel
             }
         }
 
-        public void MoveEmployeeFromOneDivisionToAnother(String from, String to, Employee employee)
+        public void MoveEmployeeFromOneDivisionToAnother(DIVISION_NAME from, DIVISION_NAME to, Employee employee)
         {
             if (!stateInvariantCheck())
             {
@@ -431,7 +439,7 @@ namespace cs742company.SpecificationModel
             }
         }
 
-        public void AddNewProjectToDivision(String division, Project newProject, int estimated) 
+        public void AddNewProjectToDivision(DIVISION_NAME division, Project newProject, int estimated) 
         {
             if (!stateInvariantCheck())
             {
@@ -476,7 +484,7 @@ namespace cs742company.SpecificationModel
             }
         }
 
-        public void RemoveProjectFromDivision(String division, Project project)
+        public void RemoveProjectFromDivision(DIVISION_NAME division, Project project)
         {
             if (!stateInvariantCheck())
             {
@@ -512,7 +520,7 @@ namespace cs742company.SpecificationModel
             }
         }
 
-        public void AssignProjectWithinDivision(String division, Project project, Employee employee)
+        public void AssignProjectWithinDivision(DIVISION_NAME division, Project project, Employee employee)
         {
             if (!stateInvariantCheck())
             {
@@ -550,7 +558,7 @@ namespace cs742company.SpecificationModel
             }
         }
 
-        public void DeAssignProjectWithinDivision(String division, Project project, Employee employee)
+        public void DeAssignProjectWithinDivision(DIVISION_NAME division, Project project, Employee employee)
         {
             if (!stateInvariantCheck())
             {
@@ -588,7 +596,7 @@ namespace cs742company.SpecificationModel
             }
         }
 
-        public void EmployeeAddingHoursToProjectInDivision(String division, Project project, Employee employee, int hoursToAdd)
+        public void EmployeeAddingHoursToProjectInDivision(DIVISION_NAME division, Project project, Employee employee, int hoursToAdd)
         {
             if (!stateInvariantCheck())
             {
@@ -600,7 +608,7 @@ namespace cs742company.SpecificationModel
                 throw new
                 PreconditionException(GetType().Name,
                 "EmployeeAddingHoursToProjectInDivision",
-                "Hours to add is less than 1.");
+                "Hours of "+employee.Name.getNAME()+" to add is less than 1.");
             }
 
 			Division d = Divisions.FirstOrDefault(div => div.Name.Equals(division));

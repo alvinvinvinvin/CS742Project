@@ -74,33 +74,33 @@ namespace cs742console
 			//Console.WriteLine ("Hello World!");
             initCompany();
 
-            String input;
-            int menuNumber;
-            bool quit = false;
+            //String input;
+            //int menuNumber;
+            //bool quit = false;
 
-            while (!quit)
-            {
-                printMenu();
-                do
-                {
-                    input = Console.ReadLine();
-                    menuNumber = tryToConvertInputToInt(input);
-                    switch (menuNumber)
-                    {
-                        case 0:
-                            Console.WriteLine("Thanks for using. Bye!");
-                            quit = true;
-                            break;
-                        case 1:
-                            break;
-                        case 2:
-                            break;
-                        default:
-                            Console.WriteLine("Please input valid command. ");
-                            break;
-                    }
-                } while (!quit); 
-            }
+            //while (!quit)
+            //{
+            //    printMenu();
+            //    do
+            //    {
+            //        input = Console.ReadLine();
+            //        menuNumber = tryToConvertInputToInt(input);
+            //        switch (menuNumber)
+            //        {
+            //            case 0:
+            //                Console.WriteLine("Thanks for using. Bye!");
+            //                quit = true;
+            //                break;
+            //            case 1:
+            //                break;
+            //            case 2:
+            //                break;
+            //            default:
+            //                Console.WriteLine("Please input valid command. ");
+            //                break;
+            //        }
+            //    } while (!quit); 
+            //}
 
             Console.ReadKey();
 
