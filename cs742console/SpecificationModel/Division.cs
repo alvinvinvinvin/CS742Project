@@ -352,7 +352,7 @@ namespace cs742console.SpecificationModel
                 throw new
                     PreconditionException(GetType().Name,
                     "EmployeeAddingHoursToProject",
-                    "hoursToAdd is less than 1.");
+                    "hoursToAdd of "+employee.Name.getNAME()+" is less than 1.");
             }
             if (!Employees.Contains(employee))
                 throw new

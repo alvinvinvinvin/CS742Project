@@ -608,7 +608,7 @@ namespace cs742console.SpecificationModel
                 throw new
                 PreconditionException(GetType().Name,
                 "EmployeeAddingHoursToProjectInDivision",
-                "Hours to add is less than 1.");
+                "Hours of "+employee.Name.getNAME()+" to add is less than 1.");
             }
 
 			Division d = Divisions.FirstOrDefault(div => div.Name.Equals(division));

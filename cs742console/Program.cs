@@ -67,21 +67,66 @@ namespace cs742console
         static Project ipp2_P = new Project("Internal project PRJ2");
         static Project ipp3_P = new Project("Internal project PRJ3");
 
+        static String mainMenuCmd = "bm";
+        static String goMainMenu = " Entering \"" + mainMenuCmd + "\" will go back to Main Menu";
 		public static void Main (string[] args)
 		{
-			Console.WriteLine ("Hello World!");
-			printMenu ();
+			//Console.WriteLine ("Hello World!");
             initCompany();
+
+            String input;
+            int menuNumber;
+            bool quit = false;
+
+            while (!quit)
+            {
+                printMenu();
+                do
+                {
+                    input = Console.ReadLine();
+                    menuNumber = tryToConvertInputToInt(input);
+                    switch (menuNumber)
+                    {
+                        case 0:
+                            Console.WriteLine("Thanks for using. Bye!");
+                            quit = true;
+                            break;
+                        case 1:
+                            break;
+                        case 2:
+                            break;
+                        default:
+                            Console.WriteLine("Please input valid command. ");
+                            break;
+                    }
+                } while (!quit); 
+            }
+
             Console.ReadKey();
 
 		}
 
+        static int tryToConvertInputToInt(String input)
+        {
+            int output;
+            bool result = Int32.TryParse(input, out output);
+            if (!result)
+            {
+                return 999;
+            }
+            return output;
+        }
+
 		static void printMenu()
 		{
-			Console.WriteLine ();
+            Console.WriteLine();
 			Console.WriteLine  (
+                "-------------------- Main Menu --------------------\n" +
+                "Please choose one option:\n" +
+                "---------------------------------------------------\n" +
+                "\n"+
 				"1. Hire Manager. \n"+
-				"2. File Manager. \n"+
+				"2. Fire Manager. \n"+
 				"3. Move Manager From One Division To Another. \n"+
 				"4. Hire Employee. \n"+
 				"5. Fire Employee. \n"+
@@ -96,9 +141,13 @@ namespace cs742console
 				"14. Display All Divisions. \n"+
 				"15. Display All Managers. \n"+
 				"16. Display All Employees By Division. \n"+
-				"0. Exit. \n"
+				"0. Exit. \n"+
+                "----------------------------------------------------\n" +
+                "Tips: " + goMainMenu + " whenever you want\n" +
+                "----------------------------------------------------"
 			);
 			Console.WriteLine ();
+            Console.WriteLine("Please input command number [0-16]: ");
 		}
 
         static void initCompany()
@@ -241,7 +290,7 @@ namespace cs742console
                 c.AssignProjectWithinDivision(real_time_systems, psfwc_P, sp_E);
                 c.AssignProjectWithinDivision(real_time_systems, psfwc_P, mk_E);
 
-                c.EmployeeAddingHoursToProjectInDivision(marketing, psfwc_P, mr_E, 0);
+                c.EmployeeAddingHoursToProjectInDivision(marketing, psfwc_P, mr_E, 1);//Original test data was 0 which is invariant exception so I changed it to 1 to test.
                 c.EmployeeAddingHoursToProjectInDivision(data_quality, psfwc_P, sw_E, 10);
                 c.EmployeeAddingHoursToProjectInDivision(data_quality, psfwc_P, el_E, 32);
                 c.EmployeeAddingHoursToProjectInDivision(software_development, psfwc_P, sb_E, 40);
@@ -300,6 +349,77 @@ namespace cs742console
                 Console.WriteLine(preE.Message);
             }
             
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        static void hireManager()
+        {
+            Console.WriteLine("Please input a manager name: ");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        static void fireManager()
+        {
+ 
+        }
+
+        static void moveManagerFromOneDivisionToAnother()
+        {
+ 
+        }
+
+        static void hireEmployee()
+        {
+ 
+        }
+
+        static void fireEmployee()
+        {
+ 
+        }
+
+        static void moveEmployeeFromOneDivisionToAnother()
+        {
+ 
+        }
+
+        static void addNewProjectToDivision()
+        {
+ 
+        }
+
+        static void removeProjectFromDivision()
+        {
+ 
+        }
+
+        static void assignProjectWithinDivision()
+        {
+ 
+        }
+
+        static void deAssignProjectWithinDivision()
+        {
+ 
+        }
+
+        static void EmployeeAddingHoursToProjectInDivision()
+        {
+ 
+        }
+
+        static void CompleteProject()
+        {
+ 
+        }
+
+        static void reportHoursSpentbyEmployeeOnProject()
+        {
+ 
         }
 	}
 
