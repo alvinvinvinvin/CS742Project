@@ -42,10 +42,16 @@ namespace cs742company.SpecificationModel
 
         /// <summary>
         ///  INIT
+        /// I have to generate new objects here and pass them to properties
+        /// because of language requirement. If I didn't, I cannot generate
+        /// a new object which only contains name to directly use it to
+        /// search or comparing with other object in Company class's methods.
         /// </summary>
         public EmployeeProjectPair() 
         {
             this.HoursSpent = 0;
+            Employee = new Employee("");
+            Project = new Project("");
         }
 
         public EmployeeProjectPair(Employee employee, Project project, int hoursSpent)
@@ -88,13 +94,21 @@ namespace cs742company.SpecificationModel
             }
 
             // Return true if the fields match:
-            return this.Employee.Name == epp.Employee.Name &&
-                this.Project.Name == epp.Project.Name;
+            return this.Employee.Name.getNAME() == epp.Employee.Name.getNAME() &&
+                this.Project.Name.getNAME() == epp.Project.Name.getNAME();
         }
 
+
+        /// <summary>
+        /// Also have to override gethashcode method to ensure object itself is unique
+        /// during comparison. The difference here is I used caret('^') to get the 
+        /// bitwise exclusive-OR of its operands, therefore it will ensure two objects are
+        /// unique by both employee name hash code and project name hash code.
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
-            return this.Employee.Name.GetHashCode() ^ this.Project.Name.GetHashCode();
+            return this.Employee.Name.getNAME().GetHashCode() ^ this.Project.Name.getNAME().GetHashCode();
         }
     }
 }

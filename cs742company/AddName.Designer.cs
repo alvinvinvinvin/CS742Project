@@ -57,11 +57,11 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(32, 32);
+            this.label1.Location = new System.Drawing.Point(97, 35);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(60, 13);
+            this.label1.Size = new System.Drawing.Size(35, 13);
             this.label1.TabIndex = 2;
-            this.label1.Text = "New Name";
+            this.label1.Text = "Name";
             // 
             // tbox_managerName
             // 
@@ -80,7 +80,7 @@
             this.Controls.Add(this.Cancel);
             this.Controls.Add(this.Ok);
             this.Name = "AddName";
-            this.Text = "HireManager";
+            this.Text = "Please input Name";
             this.ResumeLayout(false);
             this.PerformLayout();
 

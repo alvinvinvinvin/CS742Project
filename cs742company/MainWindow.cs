@@ -101,6 +101,8 @@ namespace cs742company
         {
             try
             {
+                cbb_divisions.Items.Clear();
+                cbb_projects.Items.Clear();
                 initCompany();
                 ExceptionReportor.Text = "Successfully initialized company!";
                 foreach (Division d in c.Divisions)
@@ -260,7 +262,7 @@ namespace cs742company
             c.AssignProjectWithinDivision(real_time_systems, psfwc_P, sp_E);
             c.AssignProjectWithinDivision(real_time_systems, psfwc_P, mk_E);
 
-            c.EmployeeAddingHoursToProjectInDivision(marketing, psfwc_P, mr_E, 1);//Original test data was 0 which is invariant exception so I changed it to 1 to test.
+            //c.EmployeeAddingHoursToProjectInDivision(marketing, psfwc_P, mr_E, 0);//Original test data was 0 which is invariant exception so I changed it to 1 to test.
             c.EmployeeAddingHoursToProjectInDivision(data_quality, psfwc_P, sw_E, 10);
             c.EmployeeAddingHoursToProjectInDivision(data_quality, psfwc_P, el_E, 32);
             c.EmployeeAddingHoursToProjectInDivision(software_development, psfwc_P, sb_E, 40);
@@ -314,7 +316,16 @@ namespace cs742company
         private void cbb_divisions_SelectedValueChanged(object sender, EventArgs e)
         {
             ComboboxItem item = cbb_divisions.SelectedItem as ComboboxItem;
-            tbox_managerName.Text = c.Managers[(item.Value as Division)].Name.getNAME();
+            if (c.Managers.ContainsKey((item.Value as Division)))
+            {
+                var manager = c.Managers[(item.Value as Division)];
+                tbox_managerName.Text = manager.Name.getNAME();
+            }
+            else
+            {
+                tbox_managerName.Text = "";
+            }   
+
             tbox_employees.Text = string.Empty;
             foreach (Employee employee in (item.Value as Division).Employees)
             {
@@ -337,7 +348,10 @@ namespace cs742company
             tbox_estimatedH.Text =
                 (division.Value as Division).EstimatedHours[(project.Value as Project)].ToString();
             tbox_employeeOfProject.Text = string.Empty;
-            foreach (EmployeeProjectPair epp in (division.Value as Division).EmployeeHours)
+            
+            foreach (EmployeeProjectPair epp in 
+                (division.Value as Division).EmployeeHours.Where(
+                epp1 => epp1.Project.Name.getNAME().Equals(project.Text)))
             {
                 tbox_employeeOfProject.Text += epp.Employee.Name.getNAME() + "    "
                     + epp.HoursSpent+"\r\n";
@@ -730,7 +744,8 @@ namespace cs742company
                new Project((cbb_projects.SelectedItem as ComboboxItem).Text);
             try
             {
-                c.CompleteProject(p);
+                String message = c.CompleteProject(p);
+                MessageBox.Show(message);
             }
             catch (InvariantException iE)
             {

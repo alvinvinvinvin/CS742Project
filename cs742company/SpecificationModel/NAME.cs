@@ -1,5 +1,8 @@
 ﻿using System;
 
+/*
+ * NAME class represents the basic type NAME in specification 
+ */
 namespace cs742company
 {
 	public class NAME : System.Object, IComparable
@@ -9,6 +12,7 @@ namespace cs742company
 			this.n = name;
 		}
 
+        //The "n" will contain the value of NAME object
 		private String n;
 
 		public String getNAME()
@@ -34,7 +38,11 @@ namespace cs742company
 
 		#endregion
 
-
+        /// <summary>
+        /// Overridden Equals method. It will be used a lot in other classes.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
 		public override bool Equals(System.Object obj)
 		{
 			// If parameter is null return false.
@@ -54,6 +62,11 @@ namespace cs742company
 			return this.n == N.getNAME();
 		}
 
+        /// <summary>
+        /// Also have to override gethashcode method to ensure object itself is unique
+        /// during comparison.
+        /// </summary>
+        /// <returns></returns>
 		public override int GetHashCode()
 		{
 			return this.getNAME().GetHashCode();

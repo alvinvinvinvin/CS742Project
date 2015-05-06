@@ -25,7 +25,7 @@ namespace cs742company.SpecificationModel
             Project otherProject = that as Project;
             if (otherProject != null)
             {
-                return this.Name.CompareTo(otherProject.Name);
+                return this.Name.getNAME().CompareTo(otherProject.Name.getNAME());
             }
             else
             {
@@ -49,12 +49,12 @@ namespace cs742company.SpecificationModel
             }
 
             // Return true if the fields match:
-            return this.Name == p.Name;
+            return this.Name.getNAME() == p.Name.getNAME();
         }
 
         public override int GetHashCode()
         {
-            return this.Name.GetHashCode();
+            return this.Name.getNAME().GetHashCode();
         }
     }
 }

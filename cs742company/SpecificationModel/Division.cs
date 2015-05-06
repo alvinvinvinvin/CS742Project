@@ -84,7 +84,7 @@ namespace cs742company.SpecificationModel
             Division otherDivision = that as Division;
             if (otherDivision != null)
             {
-                return Name.CompareTo(otherDivision.Name);
+                return Name.getDIVISION_NAME().CompareTo(otherDivision.Name.getDIVISION_NAME());
             }
             else
             {
@@ -108,12 +108,12 @@ namespace cs742company.SpecificationModel
             }
 
             // Return true if the fields match:
-            return Name == d.Name;
+            return Name.getDIVISION_NAME() == d.Name.getDIVISION_NAME();
         }
 
         public override int GetHashCode()
         {
-            return Name.GetHashCode();
+            return Name.getDIVISION_NAME().GetHashCode();
         }
 
         private Boolean stateInvariantCheck() 
@@ -188,6 +188,10 @@ namespace cs742company.SpecificationModel
                
         /// <summary>
         /// INIT statement
+        /// I have to generate new objects here and pass them to properties
+        /// because of language requirement. If I didn't, I cannot generate
+        /// a new object which only contains name to directly use it to
+        /// search or comparing with other object in Company class's methods.
         /// </summary>
         /// <param name="division_name"></param>
         public Division()
@@ -209,15 +213,21 @@ namespace cs742company.SpecificationModel
             ProjectHours = new Dictionary<Project,int>();
         }
 
+        /// <summary>
+        /// Add a new employee to division
+        /// </summary>
+        /// <param name="newEmployee"></param>
         public void AddEmployee(Employee newEmployee)
         {
             if (!stateInvariantCheck())
                 throw new InvariantException(GetType().Name, "AddEmployee", "before");
-            if (Employees.Any(e => e.Name.Equals(newEmployee.Name)))
+            //Precondition checking, if employee already exists then throw exception.
+            if (Employees.Any(e => e.Name.getNAME().Equals(newEmployee.Name.getNAME())))
                 throw new 
                     PreconditionException(GetType().Name, 
                     "AddEmployee", 
-                    "New Employee is already a member of the division " + Name + ".");
+                    "New Employee is already a member of the division " + Name.getDIVISION_NAME() + ".");
+            else
             Employees.Add(newEmployee);
 
             if (!stateInvariantCheck())
@@ -230,18 +240,27 @@ namespace cs742company.SpecificationModel
             Boolean resultOfRemoveFromEmployees;
             if (!stateInvariantCheck())
                 throw new InvariantException(GetType().Name, "RemoveEmployee", "before");
-            if (Employees.Any(e => e.Name.Equals(employee.Name)))
+            if (!Employees.Any(e => e.Name.getNAME().Equals(employee.Name.getNAME())))
                 throw new 
                     PreconditionException(GetType().Name, 
                     "RemoveEmployee", 
-                    "Employee is not a member of the division " + Name + ".");
+                    "Employee is not a member of the division " + Name.getDIVISION_NAME() + ".");
 
-            resultOfRemoveFromEmployees = Employees.Remove(employee);
-            EmployeeHours.ExceptWith(EmployeeHours.Where(eh => eh.Employee.Equals(employee)));
+            else
+            {
+                //remove employee from employee set first
+                resultOfRemoveFromEmployees = Employees.Remove(employee);
+                //Targeting the elements in employeeHours set based on condition below.
+                IEnumerable<EmployeeProjectPair> target =
+                    EmployeeHours.Where(eh => eh.Employee.Name.getNAME().Equals(employee.Name.getNAME()));
+                var enumeration = target.ToList();
+                //Remove the subset corresponding to what we found earlier
+                EmployeeHours.ExceptWith((IEnumerable<EmployeeProjectPair>)enumeration); 
+            }
 
             if (!stateInvariantCheck())
                 throw new InvariantException(GetType().Name, "RemoveEmployee", "after");
-            //result = EmployeeHours.Remove(employee);
+
         }
 
         public void AddProject(Project newProject, int estimated) 
@@ -255,10 +274,13 @@ namespace cs742company.SpecificationModel
             if(Projects.Contains(newProject))
                 throw new PreconditionException(GetType().Name, 
                     "AddProject", 
-                    "Project " + newProject.Name + " already exist.");
-            Projects.Add(newProject);
-            EstimatedHours.Add(newProject,estimated);
-            ProjectHours.Add(newProject, 0);
+                    "Project " + newProject.Name.getNAME() + " already exist.");
+            else
+            {
+                Projects.Add(newProject);
+                EstimatedHours.Add(newProject, estimated);
+                ProjectHours.Add(newProject, 0); 
+            }
             if (!stateInvariantCheck())
                 throw new InvariantException(GetType().Name, "AddProject", "after");
         }
@@ -271,13 +293,20 @@ namespace cs742company.SpecificationModel
                 throw new 
                     PreconditionException(GetType().Name, 
                     "RemoveProject", 
-                    "Project " + project.Name + " doesn't exist.");
+                    "Project " + project.Name.getNAME() + " doesn't exist.");
             Projects.Remove(project);
+            //Update estimatedHours;
             EstimatedHours = 
                 EstimatedHours.Where(kvp => !kvp.Key.Equals(project)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            //Update ProjectHours;
             ProjectHours =
                 ProjectHours.Where(kvp => !kvp.Key.Equals(project)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-            EmployeeHours.ExceptWith(EmployeeHours.Where(eh => eh.Project.Equals(project)));
+            //Targeting the elements in employeeHours set based on condition below.
+            IEnumerable<EmployeeProjectPair> target =
+                EmployeeHours.Where(eh => eh.Project.Equals(project));
+            var enume = target.ToList();
+            //Remove the subset corresponding to what we found earlier
+            EmployeeHours.ExceptWith((IEnumerable<EmployeeProjectPair>)enume);
             if (!stateInvariantCheck())
                 throw new InvariantException(GetType().Name, "RemoveProject", "after");
         }
@@ -291,22 +320,27 @@ namespace cs742company.SpecificationModel
                 throw new 
                     PreconditionException(GetType().Name, 
                     "AssignProject", 
-                    "Employee "+employee.Name+" doesn't exist.");
+                    "Employee "+employee.Name.getNAME()+" doesn't exist.");
             if (!Projects.Contains(project))
                 throw new 
                     PreconditionException(GetType().Name, 
                     "AssignProject", 
-                    "Project " + project.Name + " doesn't exist.");
-            if(EmployeeHours.Any(eh => eh.Employee.Equals(employee) && eh.Project.Equals(project)))
+                    "Project " + project.Name.getNAME() + " doesn't exist.");
+            if(EmployeeHours.Any(eh => eh.Employee.Name.getNAME().Equals(employee.Name.getNAME()) 
+                && eh.Project.Name.getNAME().Equals(project.Name.getNAME())))
                 throw new 
                     PreconditionException(GetType().Name, 
                     "AssignProject", 
-                    "Project " + project.Name + " has already been assigned to Employee "+employee.Name+".");
-            EmployeeProjectPair empProj = new EmployeeProjectPair();
-            empProj.Employee = employee;
-            empProj.Project = project;
-            empProj.HoursSpent = 0;
-            EmployeeHours.Add(empProj);
+                    "Project " + project.Name.getNAME() + " has already been assigned to Employee "+employee.Name+".");
+            else
+            {
+                //Generate new object and add it to employeehours.
+                EmployeeProjectPair empProj = new EmployeeProjectPair();
+                empProj.Employee = employee;
+                empProj.Project = project;
+                empProj.HoursSpent = 0;
+                EmployeeHours.Add(empProj); 
+            }
             if (!stateInvariantCheck())
                 throw new 
                     InvariantException(GetType().Name, "AssignProject", "after");
@@ -320,24 +354,27 @@ namespace cs742company.SpecificationModel
                 throw new
                     PreconditionException(GetType().Name,
                     "DeAssignProject",
-                    "Employee " + employee.Name + " doesn't exist.");
+                    "Employee " + employee.Name.getNAME() + " doesn't exist.");
             if (!Projects.Contains(project))
                 throw new
                     PreconditionException(GetType().Name,
                     "DeAssignProject",
-                    "Project " + project.Name + " doesn't exist.");
+                    "Project " + project.Name.getNAME() + " doesn't exist.");
+            //extract the elements we want based on condition
             IEnumerable<EmployeeProjectPair> target = 
                 EmployeeHours.Where(empProj => empProj.Employee.Equals(employee) && empProj.Project.Equals(project));
-            if (!target.Any())
+            var enume = target.ToList();
+            if (!enume.Any())//If there is no corresponding element.
             {
                 throw new
                        PreconditionException(GetType().Name,
                        "DeAssignProject",
-                       "Project " + project.Name + " has not been assigned to Employee " + employee.Name + ".");
+                       "Project " + project.Name.getNAME() + " has not been assigned to Employee " + employee.Name + ".");
             }
             else
             {
-                EmployeeHours.ExceptWith(target);
+                //Remove the subset corresponding to what we found earlier
+                EmployeeHours.ExceptWith((IEnumerable<EmployeeProjectPair>)enume);
             }
             if (!stateInvariantCheck())
                 throw new InvariantException(GetType().Name, "DeAssignProject", "after");
@@ -358,14 +395,15 @@ namespace cs742company.SpecificationModel
                 throw new
                     PreconditionException(GetType().Name,
                     "EmployeeAddingHoursToProject",
-                    "Employee " + employee.Name + " doesn't exist in Employees.");
+                    "Employee " + employee.Name.getNAME() + " doesn't exist in Employees.");
             if (!ProjectHours.Any(ph => ph.Key.Name.Equals(project.Name)))
             {
                 throw new
                     PreconditionException(GetType().Name,
                     "EmployeeAddingHoursToProject",
-                    "Project " + project.Name + " doesn't exist in ProjectHours.");
+                    "Project " + project.Name.getNAME() + " doesn't exist in ProjectHours.");
             }
+            //extract the elements we want based on condition
             IEnumerable<EmployeeProjectPair> target =
                 EmployeeHours.Where(empProj => empProj.Employee.Equals(employee) && empProj.Project.Equals(project));
 			var enumerable = target.ToList ();
@@ -374,17 +412,21 @@ namespace cs742company.SpecificationModel
                 throw new
                        PreconditionException(GetType().Name,
                        "DeAssignProject",
-                       "Project " + project.Name + " has not been assigned to Employee " + employee.Name + ".");
+                       "Project " + project.Name.getNAME() + " has not been assigned to Employee " + employee.Name + ".");
             }
             else
             {
+                //remove the elements we found above based on condition first
 				EmployeeHours.ExceptWith((IEnumerable<EmployeeProjectPair>)enumerable);
+                //generate new pair
                 EmployeeProjectPair newEmpProj = new EmployeeProjectPair();
                 newEmpProj.Employee = employee;
                 newEmpProj.Project = project;
+                //compute hours spent
                 newEmpProj.HoursSpent = 
                     enumerable.FirstOrDefault(empProj => empProj.Employee.Equals(employee) && empProj.Project.Equals(project)).HoursSpent + hoursToAdd;
-                EmployeeHours.Add(newEmpProj);
+                EmployeeHours.Add(newEmpProj);//add the new pair
+                //update project hours
                 ProjectHours[project] = ProjectHours[project] + hoursToAdd;
             }
             if (!stateInvariantCheck())
