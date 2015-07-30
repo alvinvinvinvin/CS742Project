@@ -20,3 +20,4 @@ C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742company\obj
 C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742company\obj\Debug\cs742company.csproj.GenerateResource.Cache
 C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742company\obj\Debug\cs742company.exe
 C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742company\obj\Debug\cs742company.pdb
+C:\Users\han\Documents\Visual Studio 2013\Projects\CS742Project\cs742company\obj\Debug\cs742company.csprojResolveAssemblyReference.cache
