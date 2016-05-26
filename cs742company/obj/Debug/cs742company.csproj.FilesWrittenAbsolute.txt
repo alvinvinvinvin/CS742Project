@@ -6,3 +6,8 @@
 /Users/hanchen/Documents/CS742Project/cs742company/bin/Debug/cs742company.exe
 /Users/hanchen/Documents/CS742Project/cs742company/obj/Debug/cs742company.exe
 /Users/hanchen/Documents/CS742Project/cs742company/obj/Debug/cs742company.exe.mdb
+/Users/hanchen/Documents/CS742Project/cs742company/obj/Debug/cs742company.AddName.resources
+/Users/hanchen/Documents/CS742Project/cs742company/obj/Debug/cs742company.AddNewProject.resources
+/Users/hanchen/Documents/CS742Project/cs742company/obj/Debug/cs742company.EmployeeAddHours.resources
+/Users/hanchen/Documents/CS742Project/cs742company/obj/Debug/cs742company.MoveEmployee.resources
+/Users/hanchen/Documents/CS742Project/cs742company/obj/Debug/cs742company.MoveManager.resources
